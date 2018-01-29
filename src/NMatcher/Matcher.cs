@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Sprache;
 using NMatcher.Activation;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace NMatcher
 {
@@ -29,6 +31,38 @@ namespace NMatcher
             var inst = _activator.CreateMatcherInstance(type);
 
             return inst.Match(value);
+        }
+
+        public bool MatchJson(string actual, string expected)
+        {
+            var actJ = JObject.Parse(actual);
+            var expJ = JObject.Parse(expected);
+
+            foreach (JProperty x in (JToken)actJ)
+            {
+                var act = x.Value;    
+                var exp = expJ.SelectToken(x.Path);
+
+                var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
+                
+                if (regex.IsMatch(exp.ToString()))
+                {
+                    var result = MatchExpression(act.ToString(), exp.ToString());
+                    if (false == result)
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (false == act.Equals(exp))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
