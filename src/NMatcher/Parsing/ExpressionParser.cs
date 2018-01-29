@@ -24,13 +24,13 @@ namespace NMatcher.Parsing
             from e in Parse.Char(')')
             select new AST.Expander(name, args);
 
-        internal static Parser<AST.Argument> QuotedString =>
+        internal static Parser<AST.Argument> DoubleQuotedString =>
             from open in Parse.Char('"')
             from content in Parse.CharExcept('"').Many().Text()
             from close in Parse.Char('"')
             select new AST.Argument(content);
 
-        internal static Parser<AST.Argument> SingleQuoted =>
+        internal static Parser<AST.Argument> SingleQuotedString =>
             from open in Parse.Char('\'')
             from content in Parse.CharExcept('\'').Many().Text()
             from close in Parse.Char('\'')
@@ -47,7 +47,7 @@ namespace NMatcher.Parsing
             select new AST.Argument(Convert.ToDouble(nom + dot + den));
 
         internal static Parser<AST.Argument> Argument =>
-            QuotedString.Or(Double).Or(Integer);
+            DoubleQuotedString.Or(SingleQuotedString).Or(Double).Or(Integer);
 
         internal static Parser<IEnumerable<AST.Argument>> Arguments =>
             Argument.DelimitedBy(Parse.Char(',').Token());

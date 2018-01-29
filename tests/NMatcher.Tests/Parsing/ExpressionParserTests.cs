@@ -23,7 +23,14 @@ namespace NMatcher.Parsing
         [Fact]
         public void it_parses_quoted_string()
         {
-            var result = ExpressionParser.QuotedString.Parse("\"foooo\"");
+            var result = ExpressionParser.DoubleQuotedString.Parse("\"foooo\"");
+            Assert.Equal("foooo", result.Value);
+        }
+
+        [Fact]
+        public void it_parses_single_quoted_string()
+        {
+            var result = ExpressionParser.SingleQuotedString.Parse("'foooo'");
             Assert.Equal("foooo", result.Value);
         }
 
@@ -44,12 +51,13 @@ namespace NMatcher.Parsing
         [Fact]
         public void it_parses_argument_list()
         {
-            var result = ExpressionParser.Arguments.Parse("1, 11.30, \"string value\"");
+            var result = ExpressionParser.Arguments.Parse("1, 11.30, \"string value\", 'string value 2'");
             var list = result.ToList();
-            Assert.Equal(3, list.Count);
+            Assert.Equal(4, list.Count);
             Assert.Equal(1, list[0].Value);
             Assert.Equal(11.3, list[1].Value);
             Assert.Equal("string value", list[2].Value);
+            Assert.Equal("string value 2", list[3].Value);
         }
 
         [Fact]

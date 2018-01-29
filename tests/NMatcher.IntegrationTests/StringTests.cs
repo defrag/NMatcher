@@ -17,7 +17,8 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            Assert.True(matcher.MatchExpression("str", "@string@.Contains(\"str\")"));
+            Assert.True(matcher.MatchExpression("string", "@string@.Contains(\"str\")"));
+            Assert.True(matcher.MatchExpression("string", "@string@.Contains('str')"));
             Assert.False(matcher.MatchExpression("barbaz", "@string@.Contains(\"str\")"));
         }
     }
