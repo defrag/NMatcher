@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NMatcher.Expressions
+namespace NMatcher.Parsing
 {
     public static class ExpressionParser
     {
@@ -52,10 +52,13 @@ namespace NMatcher.Expressions
         internal static Parser<IEnumerable<AST.Argument>> Arguments =>
             Argument.DelimitedBy(Parse.Char(',').Token());
 
-        public static Parser<AST.Type> Expression =>
+        internal static Parser<AST.Type> Expression =>
             from type in Type
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).XMany()
             select new AST.Type(type, expanders);
+
+        public static AST.Type Parse(string input) =>
+            Expression.Parse(input);
     }
 
     

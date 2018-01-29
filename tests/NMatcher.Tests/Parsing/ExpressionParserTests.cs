@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace NMatcher.Expressions
+namespace NMatcher.Parsing
 {
     public class ExpressionParserTests
     {
