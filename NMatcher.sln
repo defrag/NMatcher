@@ -3,9 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5EA69303-20C6-4906-8F93-298D65E73A92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMatcher", "src\NMatcher\NMatcher.csproj", "{90839D73-9B16-4BCC-8807-0D3C0BF88BF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7E005CFE-FF3B-4E55-B8C4-96E8F2AB4481}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMatcher.Tests", "tests\NMatcher.Tests\NMatcher.Tests.csproj", "{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90839D73-9B16-4BCC-8807-0D3C0BF88BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90839D73-9B16-4BCC-8807-0D3C0BF88BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90839D73-9B16-4BCC-8807-0D3C0BF88BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90839D73-9B16-4BCC-8807-0D3C0BF88BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{90839D73-9B16-4BCC-8807-0D3C0BF88BF0} = {5EA69303-20C6-4906-8F93-298D65E73A92}
+		{CDEBD08B-833E-42E2-A6ED-FAC12EE0E25F} = {7E005CFE-FF3B-4E55-B8C4-96E8F2AB4481}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAE6A9BE-43BC-4653-BC7C-191832BB7F84}
