@@ -57,7 +57,7 @@ namespace NMatcher.Parsing
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).XMany()
             select new AST.Type(type, expanders);
 
-        public static AST.Type Parse(string input) =>
+        public static AST.Type ParseExpression(string input) =>
             Expression.Parse(input);
     }
 
