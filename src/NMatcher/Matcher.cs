@@ -42,24 +42,23 @@ namespace NMatcher
 
             var result = true;
 
-            TraverseJson(actJ, node =>
+            TraverseJson(expJ, expectedNode =>
             {
                 var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
-                var exp = expJ.SelectToken(node.Path);
+                var currentNode = (JValue)actJ.SelectToken(expectedNode.Path);
 
-                if (regex.IsMatch(exp.ToString()))
+                if (currentNode == null)
                 {
-                    var value = (JValue)actJ.SelectToken(node.Path);
+                    throw new Exception($"Cound not find corresponding value at path '{expectedNode.Path}'.");
+                }
 
-                    if (value == null)
-                    {
-                        throw new Exception($"Cound not find corresponding value at path '{node.Path}'.");
-                    }
-                    result = MatchExpression(value.Value, exp.ToString());
+                if (regex.IsMatch(expectedNode.ToString()))
+                {
+                    result = MatchExpression(currentNode.Value, expectedNode.ToString());
                     return;
                 }
 
-                if (false == node.Equals(exp))
+                if (false == currentNode.Equals(expectedNode))
                 {
                     result = false;
                 }
