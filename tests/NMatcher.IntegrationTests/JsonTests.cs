@@ -76,5 +76,34 @@ namespace NMatcher.IntegrationTests
             Assert.True(result);
         }
 
+        [Fact]
+        public void it_fails_matchcing_for_nested_json_when_needed()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                {
+                    ""id"" : ""some-uid-here"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""80-000"",
+                        ""radius"" : ""1000""
+                    }
+                }",
+                @"
+                {
+                    ""id"" : ""@string@"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""@int@"",
+                        ""radius"" : ""1000""
+                    }
+                }"
+            );
+
+            Assert.False(result);
+        }
+
     }
 }

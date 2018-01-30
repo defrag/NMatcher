@@ -8,6 +8,7 @@ using Sprache;
 using NMatcher.Activation;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using static NMatcher.Json.JsonTraversal;
 
 namespace NMatcher
 {
@@ -41,14 +42,19 @@ namespace NMatcher
 
             var result = true;
 
-            IterateMatch(actJ.First, node =>
+            TraverseJson(actJ, node =>
             {
                 var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
                 var exp = expJ.SelectToken(node.Path);
 
                 if (regex.IsMatch(exp.ToString()))
                 {
-                    var value = (JValue)actJ[node.Path];
+                    var value = (JValue)actJ.SelectToken(node.Path);
+
+                    if (value == null)
+                    {
+                        throw new Exception($"Cound not find corresponding value at path '{node.Path}'.");
+                    }
                     result = MatchExpression(value.Value, exp.ToString());
                     return;
                 }
@@ -62,26 +68,6 @@ namespace NMatcher
             return result;
         }
 
-        private void IterateMatch(JToken node, Action<JToken> action)
-        {
-            if (node.Type == JTokenType.Object)
-            {
-                foreach (JProperty child in node.Children<JProperty>())
-                {
-                    IterateMatch(child.Value, action);
-                }
-            }
-            else if (node.Type == JTokenType.Array)
-            {
-                foreach (JToken child in node.Children())
-                {
-                    IterateMatch(child, action);
-                }
-            }
-            else
-            {
-                action((JToken)node);
-            }
-        }
+       
     }
 }
