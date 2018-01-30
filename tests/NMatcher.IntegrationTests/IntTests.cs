@@ -16,5 +16,13 @@ namespace NMatcher.IntegrationTests
 
             Assert.True(matcher.MatchExpression(100, "@int@"));
         }
+
+        [Fact]
+        public void it_doesnt_match_int_strings()
+        {
+            var matcher = new Matcher();
+
+            Assert.False(matcher.MatchExpression("1000", "@int@"));
+        }
     }
 }
