@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using static NMatcher.Json.JsonTraversal;
 using NMatcher.Matching;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace NMatcher
 {
@@ -36,8 +38,15 @@ namespace NMatcher
 
         public Result MatchJson(string actual, string expected)
         {
-            var actJ = JToken.Parse(actual);
-            var expJ = JToken.Parse(expected);
+            JToken LoadToken(string s)
+            {
+                JsonReader reader = new JsonTextReader(new StringReader(s));
+                reader.DateParseHandling = DateParseHandling.None;
+                return JToken.Load(reader);
+            }
+            
+            var actJ = LoadToken(actual);
+            var expJ = LoadToken(expected);
 
             var result = Result.Success();
 

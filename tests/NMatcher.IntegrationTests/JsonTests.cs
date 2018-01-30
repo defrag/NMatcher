@@ -92,7 +92,8 @@ namespace NMatcher.IntegrationTests
                             ""_link"" : ""http://example.com?page=2"",
                             ""_something"" : null,
                             ""_arr"" : [1, 2, 3],
-                            ""_date"" : ""2018-01-01""
+                            ""_date"" : ""2018-01-01"",
+                            ""_endDate"": ""2017-12-01T00:00:00""
                         }
                     }
                 }",
@@ -109,7 +110,8 @@ namespace NMatcher.IntegrationTests
                             ""_link"" : ""@any@"",
                             ""_something"" : ""@null@"",
                             ""_arr"" : [1, 2, 3],
-                            ""_date"" : ""@string@.IsDateTime()""
+                            ""_date"" : ""@string@.IsDateTime()"",
+                            ""_endDate"": ""@string@.IsDateTime()""
                         }
                     }
                 }"
@@ -119,7 +121,7 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
-        public void it_fails_matchcing_for_nested_json_when_needed()
+        public void it_matches_dates()
         {
             var matcher = new Matcher();
 
@@ -149,6 +151,5 @@ namespace NMatcher.IntegrationTests
             Assert.False(result.Successful);
             Assert.Equal("80-000 is not a valid int.", result.ErrorMessage);
         }
-
     }
 }
