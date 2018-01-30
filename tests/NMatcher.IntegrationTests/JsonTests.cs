@@ -57,7 +57,7 @@ namespace NMatcher.IntegrationTests
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@string@"",
                         ""meta"" : {
-                            ""name"" : ""@string@""
+                            ""name"" : ""@string@.Contains('fuu')""
                         }
                     }
                 }"
