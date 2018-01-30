@@ -35,34 +35,53 @@ namespace NMatcher
 
         public bool MatchJson(string actual, string expected)
         {
-            var actJ = JObject.Parse(actual);
+            var actJ = JToken.Parse(actual);
             var expJ = JObject.Parse(expected);
 
-            foreach (JProperty x in (JToken)actJ)
+            var result = true;
+
+            IterateMatch(actJ.First, n =>
             {
-                var act = x.Value;    
-                var exp = expJ.SelectToken(x.Path);
 
                 var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
-                
+                var exp = expJ.SelectToken(n.Path);
+
                 if (regex.IsMatch(exp.ToString()))
                 {
-                    var result = MatchExpression(act.ToString(), exp.ToString());
-                    if (false == result)
-                    {
-                        return false;
-                    }
+                    result = MatchExpression(n.ToString(), exp.ToString());
+                    return;
 
-                    continue;
                 }
 
-                if (false == act.Equals(exp))
+                if (false == n.Equals(exp))
                 {
-                    return false;
+                    result = false;
+                }
+            });
+
+            return result;
+        }
+
+        private void IterateMatch(JToken node, Action<JProperty> action)
+        {
+            if (node.Type == JTokenType.Object)
+            {
+                foreach (JProperty child in node.Children<JProperty>())
+                {
+                    IterateMatch(child.Value, action);
                 }
             }
-
-            return true;
+            else if (node.Type == JTokenType.Array)
+            {
+                foreach (JToken child in node.Children())
+                {
+                    IterateMatch(child, action);
+                }
+            }
+            else
+            {
+                action((JProperty)node);
+            }
         }
     }
 }
