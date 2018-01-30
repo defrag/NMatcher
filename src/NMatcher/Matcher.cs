@@ -37,22 +37,20 @@ namespace NMatcher
         public bool MatchJson(string actual, string expected)
         {
             var actJ = JToken.Parse(actual);
-            var expJ = JObject.Parse(expected);
+            var expJ = JToken.Parse(expected);
 
             var result = true;
 
             IterateMatch(actJ.First, node =>
             {
-
                 var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
                 var exp = expJ.SelectToken(node.Path);
 
                 if (regex.IsMatch(exp.ToString()))
                 {
-                    var value = (JValue) node.Value;
+                    var value = (JValue)actJ[node.Path];
                     result = MatchExpression(value.Value, exp.ToString());
                     return;
-
                 }
 
                 if (false == node.Equals(exp))
@@ -64,7 +62,7 @@ namespace NMatcher
             return result;
         }
 
-        private void IterateMatch(JToken node, Action<JProperty> action)
+        private void IterateMatch(JToken node, Action<JToken> action)
         {
             if (node.Type == JTokenType.Object)
             {
@@ -82,7 +80,7 @@ namespace NMatcher
             }
             else
             {
-                action((JProperty)node);
+                action((JToken)node);
             }
         }
     }

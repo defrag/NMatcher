@@ -26,6 +26,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_simple_array()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson("[1,2,3]", "[1,2,3]"));
+        }
+
+        [Fact]
         public void it_matches_nested_json()
         {
             var matcher = new Matcher();
