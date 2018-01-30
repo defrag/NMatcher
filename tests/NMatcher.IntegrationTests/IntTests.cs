@@ -26,6 +26,24 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_greater_than()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(11, "@int@.GreaterThan(10)"));
+            Assert.False(matcher.MatchExpression(5, "@int@.GreaterThan(10)"));
+        }
+
+        [Fact]
+        public void it_matches_with_lower_than()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(11, "@int@.LowerThan(100)"));
+            Assert.False(matcher.MatchExpression(5, "@int@.LowerThan(1)"));
+        }
+
+        [Fact]
         public void it_returns_false_when_value_is_not_int()
         {
             var matcher = new Matcher();

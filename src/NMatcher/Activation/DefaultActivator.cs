@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NMatcher.Matching;
-using NMatcher.Matching.Expanders.String;
+using Ints = NMatcher.Matching.Expanders.Int;
+using Strings = NMatcher.Matching.Expanders.String;
+using Doubles = NMatcher.Matching.Expanders.Double;
 
 namespace NMatcher.Activation
 {
@@ -18,21 +18,31 @@ namespace NMatcher.Activation
                     typeof(StringMatcher),
                     new Dictionary<string, Type>()
                     {
-                        { "Contains", typeof(Contains) },
-                        { "IsDateTime", typeof(IsDateTime) }
+                        { "Contains", typeof(Strings.Contains) },
+                        { "IsDateTime", typeof(Strings.IsDateTime) }
                     } 
                 )
             },
             {
                 "int",
                 new Definition(
-                    typeof(IntMatcher)
+                    typeof(IntMatcher),
+                    new Dictionary<string, Type>()
+                    {
+                        { "GreaterThan", typeof(Ints.GreaterThan) },
+                        { "LowerThan", typeof(Ints.LowerThan) }
+                    }
                 )
             },
             {
                 "double",
                 new Definition(
-                    typeof(DoubleMatcher)
+                    typeof(DoubleMatcher),
+                    new Dictionary<string, Type>()
+                    {
+                        { "GreaterThan", typeof(Doubles.GreaterThan) },
+                        { "LowerThan", typeof(Doubles.LowerThan) }
+                    }
                 )
             },
             {
