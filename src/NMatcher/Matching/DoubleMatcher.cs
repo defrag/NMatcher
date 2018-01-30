@@ -2,11 +2,13 @@
 {
     public sealed class DoubleMatcher : IMatcher
     {
-        public bool Match(object value)
+        public Result Match(object value)
         {
-            return value is float ||
+            var res = value is float ||
                 value is double ||
                 value is decimal;
+
+            return res ? Result.Success() : Result.Failure($"{value} is not a valid double.");
         }
     }
 }

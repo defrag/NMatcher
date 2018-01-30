@@ -34,6 +34,38 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_bool()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""enabled"" : true}", @"{""enabled"" : ""@bool@""}"));
+        }
+
+        [Fact]
+        public void it_matches_with_wildcard()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""id"" : 1000}", @"{""id"" : ""@any@""}"));
+        }
+
+        [Fact]
+        public void it_matches_with_null()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""id"" : null}", @"{""id"" : ""@null@""}"));
+        }
+
+        [Fact]
+        public void it_matches_with_casual_null()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""id"" : null}", @"{""id"" : null}"));
+        }
+
+        [Fact]
         public void it_matches_simple_array()
         {
             var matcher = new Matcher();
@@ -55,7 +87,10 @@ namespace NMatcher.IntegrationTests
                         ""zipCode"" : ""80-000"",
                         ""meta"" : {
                             ""name"" : ""fuuuuuu"",
-                            ""shipping"": 99.99
+                            ""shipping"": 99.99,
+                            ""enabled"" : false,
+                            ""_link"" : ""http://example.com?page=2"",
+                            ""_something"" : null
                         }
                     }
                 }",
@@ -67,13 +102,16 @@ namespace NMatcher.IntegrationTests
                         ""zipCode"" : ""@string@"",
                         ""meta"" : {
                             ""name"" : ""@string@.Contains('fuu')"",
-                            ""shipping"": ""@double@""
+                            ""shipping"": ""@double@"",
+                            ""enabled"" : ""@bool@"",
+                            ""_link"" : ""@any@"",
+                            ""_something"" : ""@null@""
                         }
                     }
                 }"
             );
 
-            Assert.True(result);
+            Assert.True(result.Successful);
         }
 
         [Fact]
@@ -88,7 +126,8 @@ namespace NMatcher.IntegrationTests
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""80-000"",
-                        ""radius"" : ""1000""
+                        ""radius"" : ""1000"",
+                        ""enabled"" : false
                     }
                 }",
                 @"
@@ -97,12 +136,14 @@ namespace NMatcher.IntegrationTests
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@int@"",
-                        ""radius"" : ""1000""
+                        ""radius"" : ""1000"",
+                        ""enabled"" : ""@bool@""
                     }
                 }"
             );
 
-            Assert.False(result);
+            Assert.False(result.Successful);
+            Assert.Equal("80-000 is not a valid int.", result.ErrorMessage);
         }
 
     }

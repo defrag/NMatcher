@@ -9,9 +9,18 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            Assert.True(matcher.MatchExpression(100.00, "@double@"));
-            Assert.True(matcher.MatchExpression(100.0f, "@double@"));
-            Assert.True(matcher.MatchExpression(100.0M, "@double@"));
+            Assert.True(matcher.MatchExpression(100.00, "@double@").Successful);
+            Assert.True(matcher.MatchExpression(100.0f, "@double@").Successful);
+            Assert.True(matcher.MatchExpression(100.0M, "@double@").Successful);
+        }
+
+        [Fact]
+        public void it_returns_false_when_value_is_not_double()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchExpression("fuuu", "@double@");
+            Assert.False(result.Successful);
+            Assert.Equal("fuuu is not a valid double.", result.ErrorMessage);
         }
     }
 }

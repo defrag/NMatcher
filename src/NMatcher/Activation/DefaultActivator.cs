@@ -33,6 +33,24 @@ namespace NMatcher.Activation
                 new Definition(
                     typeof(DoubleMatcher)
                 )
+            },
+            {
+                "bool",
+                new Definition(
+                    typeof(BoolMatcher)
+                )
+            },
+            {
+                "any",
+                new Definition(
+                    typeof(WildcardMatcher)
+                )
+            },
+            {
+                "null",
+                new Definition(
+                    typeof(NullMatcher)
+                )
             }
         };
 

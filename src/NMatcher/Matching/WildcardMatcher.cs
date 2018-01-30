@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace NMatcher.Matching
 {
-    public interface IMatcher
+    public sealed class WildcardMatcher : IMatcher
     {
-        Result Match(object value);
+        public Result Match(object value)
+        {
+            return Result.Success();
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            Assert.True(matcher.MatchExpression("str", "@string@"));
+            Assert.True(matcher.MatchExpression("str", "@string@").Successful);
         }
 
         [Fact]
@@ -20,6 +20,15 @@ namespace NMatcher.IntegrationTests
             Assert.True(matcher.MatchExpression("string", "@string@.Contains(\"str\")"));
             Assert.True(matcher.MatchExpression("string", "@string@.Contains('str')"));
             Assert.False(matcher.MatchExpression("barbaz", "@string@.Contains(\"str\")"));
+        }
+
+        [Fact]
+        public void it_returns_false_when_value_is_not_string()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchExpression(100, "@string@.Contains(\"str\")");
+            Assert.False(result.Successful);
+            Assert.Equal("100 is not a valid string.", result.ErrorMessage);
         }
     }
 }

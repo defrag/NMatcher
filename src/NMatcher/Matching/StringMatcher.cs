@@ -21,9 +21,19 @@ namespace NMatcher.Matching
 
         }
 
-        public bool Match(object value)
+        public Result Match(object value)
         {
-            return value is string && _expanders.All(_ => _.Matches((string)value));
+            if (false == value is string)
+            {
+                return Result.Failure($"{value} is not a valid string.");
+            }
+
+            if (_expanders.All(_ => _.Matches((string)value)))
+            {
+                return Result.Success();
+            }
+
+            return Result.Failure($"{value} is not match all the expanders.");
         }
     }
 }

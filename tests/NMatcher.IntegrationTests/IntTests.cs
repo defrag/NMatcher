@@ -14,7 +14,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            Assert.True(matcher.MatchExpression(100, "@int@"));
+            Assert.True(matcher.MatchExpression(100, "@int@").Successful);
         }
 
         [Fact]
@@ -22,7 +22,16 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            Assert.False(matcher.MatchExpression("1000", "@int@"));
+            Assert.False(matcher.MatchExpression("1000", "@int@").Successful);
+        }
+
+        [Fact]
+        public void it_returns_false_when_value_is_not_int()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchExpression(99.99, "@int@");
+            Assert.False(result.Successful);
+            Assert.Equal("99.99 is not a valid int.", result.ErrorMessage);
         }
     }
 }
