@@ -27,6 +27,12 @@ namespace NMatcher.Activation
                 new Definition(
                     typeof(IntMatcher)
                 )
+            },
+            {
+                "double",
+                new Definition(
+                    typeof(DoubleMatcher)
+                )
             }
         };
 

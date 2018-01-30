@@ -26,6 +26,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_double()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""price"" : 100.00}", @"{""price"" : ""@double@""}"));
+        }
+
+        [Fact]
         public void it_matches_simple_array()
         {
             var matcher = new Matcher();
@@ -46,7 +54,8 @@ namespace NMatcher.IntegrationTests
                         ""city"" : ""NY"",
                         ""zipCode"" : ""80-000"",
                         ""meta"" : {
-                            ""name"" : ""fuuuuuu""
+                            ""name"" : ""fuuuuuu"",
+                            ""shipping"": 99.99
                         }
                     }
                 }",
@@ -57,7 +66,8 @@ namespace NMatcher.IntegrationTests
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@string@"",
                         ""meta"" : {
-                            ""name"" : ""@string@.Contains('fuu')""
+                            ""name"" : ""@string@.Contains('fuu')"",
+                            ""shipping"": ""@double@""
                         }
                     }
                 }"
