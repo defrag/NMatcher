@@ -23,6 +23,23 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_string_which_is_date()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression("2018-01-01", "@string@.IsDateTime()"));
+            Assert.False(matcher.MatchExpression("test", "@string@.IsDateTime()"));
+        }
+
+        [Fact]
+        public void it_matches_string_which_is_datetime()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression("2018-01-01 11:00:12", "@string@.IsDateTime()"));
+        }
+
+        [Fact]
         public void it_returns_false_when_value_is_not_string()
         {
             var matcher = new Matcher();

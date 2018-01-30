@@ -90,7 +90,9 @@ namespace NMatcher.IntegrationTests
                             ""shipping"": 99.99,
                             ""enabled"" : false,
                             ""_link"" : ""http://example.com?page=2"",
-                            ""_something"" : null
+                            ""_something"" : null,
+                            ""_arr"" : [1, 2, 3],
+                            ""_date"" : ""2018-01-01""
                         }
                     }
                 }",
@@ -105,7 +107,9 @@ namespace NMatcher.IntegrationTests
                             ""shipping"": ""@double@"",
                             ""enabled"" : ""@bool@"",
                             ""_link"" : ""@any@"",
-                            ""_something"" : ""@null@""
+                            ""_something"" : ""@null@"",
+                            ""_arr"" : [1, 2, 3],
+                            ""_date"" : ""@string@.IsDateTime()""
                         }
                     }
                 }"

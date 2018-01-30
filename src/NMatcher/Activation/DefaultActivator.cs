@@ -18,7 +18,8 @@ namespace NMatcher.Activation
                     typeof(StringMatcher),
                     new Dictionary<string, Type>()
                     {
-                        { "Contains", typeof(Contains) }
+                        { "Contains", typeof(Contains) },
+                        { "IsDateTime", typeof(IsDateTime) }
                     } 
                 )
             },
