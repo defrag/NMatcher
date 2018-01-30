@@ -27,6 +27,7 @@ namespace NMatcher
 
         public bool MatchExpression(object value, string expression)
         {
+            var t = value.GetType(); ;
             var type = ExpressionParser.ParseExpression(expression);
             var inst = _activator.CreateMatcherInstance(type);
 
@@ -40,20 +41,21 @@ namespace NMatcher
 
             var result = true;
 
-            IterateMatch(actJ.First, n =>
+            IterateMatch(actJ.First, node =>
             {
 
                 var regex = new Regex("@[a-zA-Z]+@", RegexOptions.IgnoreCase);
-                var exp = expJ.SelectToken(n.Path);
+                var exp = expJ.SelectToken(node.Path);
 
                 if (regex.IsMatch(exp.ToString()))
                 {
-                    result = MatchExpression(n.ToString(), exp.ToString());
+                    var value = (JValue) node.Value;
+                    result = MatchExpression(value.Value, exp.ToString());
                     return;
 
                 }
 
-                if (false == n.Equals(exp))
+                if (false == node.Equals(exp))
                 {
                     result = false;
                 }

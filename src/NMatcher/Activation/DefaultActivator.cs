@@ -21,6 +21,12 @@ namespace NMatcher.Activation
                         { "Contains", typeof(Contains) }
                     } 
                 )
+            },
+            {
+                "int",
+                new Definition(
+                    typeof(IntMatcher)
+                )
             }
         };
 
@@ -28,7 +34,7 @@ namespace NMatcher.Activation
         {
             if (false == _map.ContainsKey(type.Name))
             {
-                throw new Exception($"Type {type} could not be found in map.");
+                throw new Exception($"Type {type.Name} could not be found in map.");
             }
 
             var definition = _map[type.Name];
