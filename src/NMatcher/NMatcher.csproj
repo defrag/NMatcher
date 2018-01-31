@@ -5,7 +5,9 @@
     <Description>NMatcher is a simple library that eases tests (mostly with json).</Description>
     <Copyright>Copyright NMatcher Contributors 2017</Copyright>
     <AssemblyTitle>NMatcher</AssemblyTitle>
-    <PackageVersion>1.0.1</PackageVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
+    <Version>1.0.2</Version>
     <Authors>Michal Dabrowski;Contributors</Authors>
     <AssemblyName>NMatcher</AssemblyName>
     <PackageId>NMatcher</PackageId>

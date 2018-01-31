@@ -66,6 +66,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_guid()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{""id"" : ""c56a4180-65aa-42ec-a945-5fd21dec0538""}", @"{""id"" : ""@guid@""}"));
+        }
+
+        [Fact]
         public void it_matches_simple_array()
         {
             var matcher = new Matcher();
@@ -82,6 +90,7 @@ namespace NMatcher.IntegrationTests
                 @"
                 {
                     ""id"" : ""some-uid-here"",
+                    ""uid"": ""C56A4180-65AA-42EC-A945-5FD21DEC0538"", 
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""80-000"",
@@ -100,6 +109,7 @@ namespace NMatcher.IntegrationTests
                 @"
                 {
                     ""id"" : ""@string@"",
+                    ""uid"": ""@guid@"", 
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@string@"",

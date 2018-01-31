@@ -1,16 +1,10 @@
 ﻿using NMatcher.Parsing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NMatcher.Activation;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using static NMatcher.Json.JsonTraversal;
+using static NMatcher.Json.JsonTokenLoader;
 using NMatcher.Matching;
-using Newtonsoft.Json;
-using System.IO;
 
 namespace NMatcher
 {
@@ -38,22 +32,15 @@ namespace NMatcher
 
         public Result MatchJson(string actual, string expected)
         {
-            JToken LoadToken(string s)
-            {
-                JsonReader reader = new JsonTextReader(new StringReader(s));
-                reader.DateParseHandling = DateParseHandling.None;
-                return JToken.Load(reader);
-            }
-            
-            var actJ = LoadToken(actual);
-            var expJ = LoadToken(expected);
+            var actualJson = LoadJson(actual);
+            var expectedJson = LoadJson(expected);
 
             var result = Result.Success();
 
-            TraverseJson(expJ, expectedNode =>
+            TraverseJson(expectedJson, expectedNode =>
             {
                 var regex = new Regex("@([a-zA-Z]|\\*)+@", RegexOptions.IgnoreCase);
-                var currentNode = (JValue)actJ.SelectToken(expectedNode.Path);
+                var currentNode = (JValue)actualJson.SelectToken(expectedNode.Path);
 
                 if (currentNode == null)
                 {
@@ -73,7 +60,7 @@ namespace NMatcher
 
                 if (false == currentNode.Equals(expectedNode))
                 {
-                    result = Result.Failure($"Node {currentNode} did not match {expectedNode}.");
+                    result = Result.Failure($"{currentNode} did not match {expectedNode} at path {expectedNode.Path}.");
                 }
             });
 

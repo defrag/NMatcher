@@ -62,6 +62,12 @@ namespace NMatcher.Activation
                 new Definition(
                     typeof(NullMatcher)
                 )
+            },
+            {
+                "guid",
+                new Definition(
+                    typeof(GuidMatcher)
+                )
             }
         };
 
