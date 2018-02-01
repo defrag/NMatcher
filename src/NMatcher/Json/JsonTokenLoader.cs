@@ -10,6 +10,7 @@ namespace NMatcher.Json
         {
             JsonReader reader = new JsonTextReader(new StringReader(json));
             reader.DateParseHandling = DateParseHandling.None;
+
             return JToken.Load(reader);
         }
     }

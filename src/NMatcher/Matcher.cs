@@ -1,15 +1,14 @@
 ﻿using NMatcher.Parsing;
 using NMatcher.Activation;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
-using static NMatcher.Json.JsonTraversal;
-using static NMatcher.Json.JsonTokenLoader;
+using static NMatcher.Json.JsonComparator;
 using NMatcher.Matching;
 
 namespace NMatcher
 {
     public class Matcher
     {
+        private readonly Regex _matcherRegex = new Regex("@([a-zA-Z]|\\*)+@", RegexOptions.IgnoreCase);
         private readonly IActivator _activator;
 
         public Matcher(IActivator activator)
@@ -32,25 +31,31 @@ namespace NMatcher
 
         public Result MatchJson(string actual, string expected)
         {
-            var actualJson = LoadJson(actual);
-            var expectedJson = LoadJson(expected);
-
             var result = Result.Success();
 
-            TraverseJson(expectedJson, expectedNode =>
+            string FormatError(object act, object exp, string path)
             {
-                var regex = new Regex("@([a-zA-Z]|\\*)+@", RegexOptions.IgnoreCase);
-                var currentNode = (JValue)actualJson.SelectToken(expectedNode.Path);
+                var ac = act == null ? "null" : act.ToString();
+                var ec = exp == null ? "null" : exp.ToString();
 
-                if (currentNode == null)
+                if (act == null && exp != null)
                 {
-                    result = Result.Failure($"Cound not find corresponding value at path '{expectedNode.Path}'.");
-                    return;
+                    return $"Actual value did not appear at path {path}.";
                 }
 
-                if (regex.IsMatch(expectedNode.ToString()))
+                if (act != null && exp == null)
                 {
-                    var r = MatchExpression(currentNode.Value, expectedNode.ToString());
+                    return $"Expected value did not appear at path {path}.";
+                }
+
+                return $"{ac} did not match {ec} at path {path}.";
+            };
+
+            CompareJson(actual, expected, (a, e, path, compareFn) =>
+            {
+                if (e != null && _matcherRegex.IsMatch(e.ToString()))
+                {
+                    var r = MatchExpression(a, e.ToString());
                     if (false == r.Successful)
                     {
                         result = r;
@@ -58,9 +63,9 @@ namespace NMatcher
                     return;
                 }
 
-                if (false == currentNode.Equals(expectedNode))
+                if (false == compareFn())
                 {
-                    result = Result.Failure($"{currentNode} did not match {expectedNode} at path {expectedNode.Path}.");
+                    result = Result.Failure(FormatError(a, e, path));
                 }
             });
 

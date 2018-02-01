@@ -61,8 +61,16 @@ namespace NMatcher.IntegrationTests
         public void it_matches_with_casual_null()
         {
             var matcher = new Matcher();
+            var result = matcher.MatchJson(@"{""id"" : null}", @"{""id"" : null}");
+            Assert.True(result.Successful);
+        }
 
-            Assert.True(matcher.MatchJson(@"{""id"" : null}", @"{""id"" : null}"));
+        [Fact]
+        public void it_matches_empty_objects()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchJson(@"{}", @"{}"));
         }
 
         [Fact]
@@ -160,6 +168,78 @@ namespace NMatcher.IntegrationTests
 
             Assert.False(result.Successful);
             Assert.Equal("80-000 is not a valid int.", result.ErrorMessage);
+        }
+
+
+        [Fact]
+        public void it_doesnt_matches_with_keys_that_doesnt_exist()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{}");
+            Assert.False(result.Successful);
+            Assert.Equal("Expected value did not appear at path id.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public void it_doesnt_matches_with_keys_that_doesnt_exist_in_nested_actual_json()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                {
+                    ""id"" : ""some-uid-here"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""80-000"",
+                        ""enabled"" : false
+                    }
+                }",
+                @"
+                {
+                    ""id"" : ""@string@"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""@string@"",
+                        ""radius"" : ""1000"",
+                        ""enabled"" : ""@bool@""
+                    }
+                }"
+            );
+
+            Assert.False(result.Successful);
+            Assert.Equal("Actual value did not appear at path subnode.radius.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public void it_doesnt_matches_with_keys_that_doesnt_exist_in_nested_expected_json()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                {
+                    ""id"" : ""some-uid-here"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""80-000"",
+                        ""enabled"" : false,
+                        ""notInExpected"" : true
+                    }
+                }",
+                @"
+                {
+                    ""id"" : ""@string@"",
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""@string@"",
+                        ""radius"" : ""1000""
+                    }
+                }"
+            );
+
+            Assert.False(result.Successful);
+            Assert.Equal("Expected value did not appear at path subnode.notInExpected.", result.ErrorMessage);
         }
     }
 }
