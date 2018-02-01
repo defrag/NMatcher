@@ -233,7 +233,7 @@ namespace NMatcher.IntegrationTests
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@string@"",
-                        ""radius"" : ""1000""
+                        ""enabled"" : ""@bool@""
                     }
                 }"
             );

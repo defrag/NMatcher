@@ -1,8 +1,10 @@
 ﻿using NMatcher.Parsing;
 using NMatcher.Activation;
 using System.Text.RegularExpressions;
-using static NMatcher.Json.JsonComparator;
+using NMatcher.Json.Pairing;
 using NMatcher.Matching;
+using System.Linq;
+using NMatcher.Json.Pairing.Exceptions;
 
 namespace NMatcher
 {
@@ -31,47 +33,36 @@ namespace NMatcher
 
         public Result MatchJson(string actual, string expected)
         {
-            var result = Result.Success();
+            Result ToPairingResult(Pair pair)
+            {
+                if (pair.Expected != null && _matcherRegex.IsMatch(pair.Expected.ToString()))
+                {
+                    return MatchExpression(pair.Actual, pair.Expected.ToString());
+                }
+
+                return pair.IsEqual ? Result.Success() : Result.Failure(FormatError(pair.Actual, pair.Expected, pair.Path));
+            };
 
             string FormatError(object act, object exp, string path)
             {
                 var ac = act == null ? "null" : act.ToString();
                 var ec = exp == null ? "null" : exp.ToString();
 
-                if (act == null && exp != null)
-                {
-                    return $"Actual value did not appear at path {path}.";
-                }
-
-                if (act != null && exp == null)
-                {
-                    return $"Expected value did not appear at path {path}.";
-                }
-
                 return $"{ac} did not match {ec} at path {path}.";
             };
 
-            CompareJson(actual, expected, (a, e, path, compareFn) =>
+            try
             {
-                if (e != null && _matcherRegex.IsMatch(e.ToString()))
-                {
-                    var r = MatchExpression(a, e.ToString());
-                    if (false == r.Successful)
-                    {
-                        result = r;
-                    } 
-                    return;
-                }
+                var error = JsonPairing.PairJson(actual, expected)
+                    .Select(ToPairingResult)
+                    .FirstOrDefault(_ => false == _.Successful);
 
-                if (false == compareFn())
-                {
-                    result = Result.Failure(FormatError(a, e, path));
-                }
-            });
-
-            return result;
+                return error ?? Result.Success();
+            }
+            catch (PathMissingException e)
+            {
+                return Result.Failure(e.Message);
+            }
         }
-
-       
     }
 }

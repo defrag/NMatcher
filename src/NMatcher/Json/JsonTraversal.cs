@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace NMatcher.Json
 {
@@ -25,6 +26,17 @@ namespace NMatcher.Json
             {
                 action((JToken)node);
             }
+        }
+
+        internal static IEnumerable<string> AccumulatePaths(JToken token)
+        {
+            var res = new List<string>();
+            TraverseJson(token, node =>
+            {
+                res.Add(node.Path);
+            });
+
+            return res;
         }
     }
 }
