@@ -130,6 +130,47 @@ matcher.MatchExpression("C56A4180-65AA-42EC-A945-5FD21DEC0538", "@guid@");
 #### JSON matching:
 This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test.
 
+### Integration with test frameworks
+NMatcher doesn't come with out of the box integration with test frameworks, but its super easy to roll your own version. Here is a sample with fluent assertions:
+
+```csharp
+public static class AssertionsExtensions
+{
+    public static AndConstraint<StringAssertions> MatchJson(this StringAssertions assertions, string expected, string because = "", params object[] becauseArgs)
+    {
+        var matcher = new Matcher();
+        var result = matcher.MatchJson(assertions.Subject, expected);
+        Execute.Assertion
+            .ForCondition(result.Successful)
+            .BecauseOf(because, becauseArgs)
+            .FailWith($"Json matching failed because of following reason: '{result.ErrorMessage}'.");
+        return new AndConstraint<StringAssertions>(assertions);
+    }
+}
+
+// use it later on
+
+[Fact]
+public async Task it_returns_200_with_product()
+{
+    var id = Guid.NewGuid();
+    await ProductContext.ProductExist(id, "Shampoo", 19.99M);
+
+    var response = await Client.GetAsync($"api/1.0/products/{id}");
+    response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+    var contents = await response.Content.ReadAsStringAsync();
+
+    contents.Should().MatchJson(@"
+        {
+          ""Id"": ""@guid@"",
+          ""Name"": ""Shampoo"",
+          ""Price"": ""19.99""
+        }
+    ");
+}
+
+```
 
 ### License
 
