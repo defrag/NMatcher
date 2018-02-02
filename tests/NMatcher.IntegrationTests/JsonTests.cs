@@ -90,6 +90,23 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_array_of_objects()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(
+                @"
+                [
+                    {""id"": 100, ""enabled"" : true}
+                ]", 
+                @"
+                [
+                    {""id"": ""@int@"", ""enabled"" : ""@bool@""}
+                ]");
+
+            Assert.True(result.Successful);
+        }
+
+        [Fact]
         public void it_matches_nested_json()
         {
             var matcher = new Matcher();
