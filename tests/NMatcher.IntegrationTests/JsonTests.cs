@@ -107,6 +107,27 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_different_arrays()
+        {
+            var matcher = new Matcher();
+            Assert.False(matcher.MatchJson("[1,2,3,4]", "[1,2,3]"));
+            Assert.False(matcher.MatchJson("[1,2,3]", "[1,2,3,4]"));
+        }
+
+        [Fact]
+        public void it_matches_array_with_expressions()
+        {
+            var matcher = new Matcher();
+            Assert.True(matcher.MatchJson("[1,2]", @"[""@int@"", ""@int@""]"));
+        }
+
+        [Fact]
+        public void it_doesnt_array_with_expressions_when_it_fails_evaulation()
+        {
+            var matcher = new Matcher();
+            Assert.False(matcher.MatchJson("[1,2]", @"[""@int@"", ""@string@""]"));
+        }
+        [Fact]
         public void it_matches_nested_json()
         {
             var matcher = new Matcher();
@@ -125,7 +146,8 @@ namespace NMatcher.IntegrationTests
                             ""enabled"" : false,
                             ""_link"" : ""http://example.com?page=2"",
                             ""_something"" : null,
-                            ""_arr"" : [1, 2, 3],
+                            ""_arr"" : [1, 2, 3, 4],
+                            ""_arr2"" : [""fuu"", ""bar""],
                             ""_date"" : ""2018-01-01"",
                             ""_endDate"": ""2017-12-01T00:00:00""
                         }
@@ -144,12 +166,53 @@ namespace NMatcher.IntegrationTests
                             ""enabled"" : ""@bool@"",
                             ""_link"" : ""@any@"",
                             ""_something"" : ""@null@"",
-                            ""_arr"" : [1, 2, 3],
+                            ""_arr"" : [1, 2, 3, 4],
+                            ""_arr2"" : ""@array@"",
                             ""_date"" : ""@string@.IsDateTime()"",
                             ""_endDate"": ""@string@.IsDateTime()""
                         }
                     }
                 }"
+            );
+
+            Assert.True(result.Successful);
+        }
+
+        [Fact]
+        public void it_matches_with_arrays()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                {
+                     ""arr"" : [1, 2, 3, 4]
+                }",
+                @"
+                {
+                    ""arr"" : ""@array@""             
+                }"
+            );
+
+            Assert.True(result.Successful);
+        }
+
+        [Fact]
+        public void it_matches_with_array_of_objs()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                    [
+                        {""id"": 10}
+                    ]
+                ",
+                @"
+                    [
+                        {""id"": ""@int@""}
+                    ],                    
+                "
             );
 
             Assert.True(result.Successful);
@@ -187,6 +250,14 @@ namespace NMatcher.IntegrationTests
             Assert.Equal("80-000 is not a valid int.", result.ErrorMessage);
         }
 
+        [Fact]
+        public void it_doesnt_just_values()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{""id"" : 2}");
+            Assert.False(result.Successful);
+            Assert.Equal("1 did not match 2 at path id.", result.ErrorMessage);
+        }
 
         [Fact]
         public void it_doesnt_matches_with_keys_that_doesnt_exist()
@@ -257,6 +328,32 @@ namespace NMatcher.IntegrationTests
 
             Assert.False(result.Successful);
             Assert.Equal("Expected value did not appear at path subnode.notInExpected.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public void it_doesnt_matches_when_nested_values_just_dont_match()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                {
+                    ""id"" : ""some-uid-here"",
+                    ""subnode"" : {
+                        ""city"" : ""NY""
+                    }
+                }",
+                @"
+                {
+                    ""id"" : ""@string@"",
+                    ""subnode"" : {
+                        ""city"" : ""LA""
+                    }
+                }"
+            );
+
+            Assert.False(result.Successful);
+            Assert.Equal("NY did not match LA at path subnode.city.", result.ErrorMessage);
         }
     }
 }

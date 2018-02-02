@@ -68,6 +68,12 @@ namespace NMatcher.Activation
                 new Definition(
                     typeof(GuidMatcher)
                 )
+            },
+            {
+                "array",
+                new Definition(
+                    typeof(ArrayMatcher)
+                )
             }
         };
 

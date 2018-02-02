@@ -1,10 +1,12 @@
 ﻿using NMatcher.Parsing;
 using NMatcher.Activation;
 using System.Text.RegularExpressions;
-using NMatcher.Json.Pairing;
 using NMatcher.Matching;
 using System.Linq;
-using NMatcher.Json.Pairing.Exceptions;
+using NMatcher.Json;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using NMatcher.Json.Pairing;
 
 namespace NMatcher
 {
@@ -51,18 +53,25 @@ namespace NMatcher
                 return $"{ac} did not match {ec} at path {path}.";
             };
 
-            try
-            {
-                var error = JsonPairing.PairJson(actual, expected)
-                    .Select(ToPairingResult)
-                    .FirstOrDefault(_ => false == _.Successful);
+            var result = JsonMatcher.IterateMatch(actual, expected);
 
-                return error ?? Result.Success();
-            }
-            catch (PathMissingException e)
+            var expectedDiff = result.Item2.Except(result.Item3);
+            if (expectedDiff.Any())
             {
-                return Result.Failure(e.Message);
+                return Result.Failure($"Expected value did not appear at path {expectedDiff.First()}.");
             }
+
+            var actualDiff = result.Item3.Except(result.Item2);
+            if (actualDiff.Any())
+            {
+                return Result.Failure($"Actual value did not appear at path {actualDiff.First()}.");
+            }
+
+            var error = result.Item1
+                   .Select(ToPairingResult)
+                   .FirstOrDefault(_ => false == _.Successful);
+
+            return error ?? Result.Success();
         }
     }
 }
