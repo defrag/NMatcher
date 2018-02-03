@@ -68,6 +68,10 @@ public void it_matches_nested_json()
 * @null@
 * @any@
 * @guid@
+* @array@
+
+Expressions come with optional types as well (@string?@, @int?@ etc).
+
 
 ### Basic usage wraps around two methods:
 
