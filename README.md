@@ -30,6 +30,7 @@ public void it_matches_nested_json()
                     ""_link"" : ""http://example.com?page=2"",
                     ""_something"" : null,
                     ""_arr"" : [1, 2, 3],
+                    ""_arr2"" : [10, 20, 30],
                     ""_date"" : ""2018-01-01""
                 }
             }
@@ -47,7 +48,9 @@ public void it_matches_nested_json()
                     ""_link"" : ""@any@"",
                     ""_something"" : ""@null@"",
                     ""_arr"" : [1, 2, 3],
-                    ""_date"" : ""@string@.IsDateTime()""
+                    ""_arr2"" : ""@array@"",
+                    ""_date"" : ""@string@.IsDateTime()"",
+                    ""_signature"" : ""@string?@.Contains('sha')""
                 }
             }
         }"
@@ -85,7 +88,8 @@ matcher.MatchJson(@"{""enabled"" : true}", @"{""enabled"" : ""@bool@""}"); // ma
 var matcher = new Matcher();
 matcher.MatchExpression("2018-01-01 11:00:12", "@string@.IsDateTime()");
 matcher.MatchExpression("str", "@string@");
-matcher.MatchExpression("string", "@string@.Contains('str')")
+matcher.MatchExpression("string", "@string@.Contains('str')");
+matcher.MatchExpression(null, "@string?@.Contains('str')"); //optional
 ```
 
 #### Int matching:
@@ -95,6 +99,7 @@ matcher.MatchExpression("1000", "@int@");
 matcher.MatchExpression(11, "@int@.GreaterThan(10)");
 matcher.MatchExpression(11, "@int@.LowerThan(100)");
 matcher.MatchExpression(11, "@int@.GreaterThan(10).LowerThan(20)");
+matcher.MatchExpression(null, "@int?@)"); //optional
 ```
 
 #### Double matching:
@@ -103,6 +108,8 @@ var matcher = new Matcher();
 matcher.MatchExpression(100.00, "@double@");
 matcher.MatchExpression(17.59, "@double@.GreaterThan(17.50)");
 matcher.MatchExpression(9.5, "@double@.LowerThan(10.0)");
+matcher.MatchExpression(null, "@double?@)"); //optional
+
 ```
 
 #### Null matching:
@@ -125,10 +132,17 @@ matcher.MatchExpression(false, "@any@");
 var matcher = new Matcher();
 matcher.MatchExpression("843475f5-f7c9-4a28-b028-a3a7dc456e91", "@guid@");
 matcher.MatchExpression("C56A4180-65AA-42EC-A945-5FD21DEC0538", "@guid@");
+matcher.MatchExpression(null, "@optional?@)"); //optional
+```
+#### Array matching:
+```csharp
+var matcher = new Matcher();
+matcher.MatchExpression(new int[] { 1, 2, 3 }, "@array@");
+matcher.MatchExpression(new string[] { "fuu", "bar", "baz" }, "@array@");
 ```
 
 #### JSON matching:
-This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test.
+This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test. All checks can be wrapped with optional condition (eg @string?@), which will ommit assertion when expected node was not found in actual json.
 
 ### Integration with test frameworks
 NMatcher doesn't come with out of the box integration with test frameworks, but its super easy to roll your own version. Here is a sample with fluent assertions:
