@@ -18,6 +18,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_ints_with_optional()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(null, "@int?@"));
+        }
+
+        [Fact]
         public void it_doesnt_match_int_strings()
         {
             var matcher = new Matcher();

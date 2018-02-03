@@ -14,6 +14,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_guid_with_optional()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(null, "@guid?@"));
+        }
+
+        [Fact]
         public void it_returns_false_when_value_is_not_guid()
         {
             var matcher = new Matcher();

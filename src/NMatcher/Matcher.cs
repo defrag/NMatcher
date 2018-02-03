@@ -12,7 +12,7 @@ namespace NMatcher
 {
     public class Matcher
     {
-        private readonly Regex _matcherRegex = new Regex("@([a-zA-Z]|\\*)+@", RegexOptions.IgnoreCase);
+        private readonly Regex _matcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
         private readonly IActivator _activator;
 
         public Matcher(IActivator activator)

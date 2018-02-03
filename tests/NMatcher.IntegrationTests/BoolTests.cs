@@ -19,6 +19,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_bools_with_optional()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(null, "@bool?@"));
+        }
+
+        [Fact]
         public void it_returns_false_when_value_is_not_double()
         {
             var matcher = new Matcher();

@@ -13,6 +13,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_string_with_optional()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(null, "@string?@").Successful);
+        }
+
+        [Fact]
         public void it_matches_string_with_contains()
         {
             var matcher = new Matcher();

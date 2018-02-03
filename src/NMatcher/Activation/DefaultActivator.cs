@@ -93,7 +93,15 @@ namespace NMatcher.Activation
                )
                .Select(_ => Activator.CreateInstance(_.Item1, _.Item2.ToArray()) );
 
-            return (IMatcher) Activator.CreateInstance(definition.Type, expanders.ToArray());
+   
+            var instance = (IMatcher) Activator.CreateInstance(definition.Type, expanders.ToArray());
+
+            if (type.IsOptional)
+            {
+                return (IMatcher)Activator.CreateInstance(typeof(OptionalMatcher), instance);
+            }
+
+            return instance;
         }
     }
 }

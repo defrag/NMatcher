@@ -10,7 +10,16 @@ namespace NMatcher.Parsing
         public void it_parses_type()
         {
             var result = ExpressionParser.Type.Parse("@bool@");
-            Assert.Equal("bool", result);
+            Assert.Equal("bool", result.Item1);
+            Assert.False(result.Item2);
+        }
+
+        [Fact]
+        public void it_parses_optional_type()
+        {
+            var result = ExpressionParser.Type.Parse("@bool?@");
+            Assert.Equal("bool", result.Item1);
+            Assert.True(result.Item2);
         }
 
         [Fact]

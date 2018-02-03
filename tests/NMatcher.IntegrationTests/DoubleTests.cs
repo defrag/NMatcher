@@ -15,6 +15,14 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_double_with_optional()
+        {
+            var matcher = new Matcher();
+
+            Assert.True(matcher.MatchExpression(null, "@double?@"));
+        }
+
+        [Fact]
         public void it_matches_with_greater_than()
         {
             var matcher = new Matcher();

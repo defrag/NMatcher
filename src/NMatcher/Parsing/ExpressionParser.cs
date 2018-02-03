@@ -7,8 +7,12 @@ namespace NMatcher.Parsing
 {
     public static class ExpressionParser
     {
-        internal static Parser<string> Type =>
-            Parse.Letter.AtLeastOnce().Text().Contained(Parse.Char('@'), Parse.Char('@'));
+        internal static Parser<Tuple<string, bool>> Type =>
+            from open in Parse.Char('@')
+            from name in Parse.Letter.AtLeastOnce().Text()
+            from optional in Parse.Char('?').Optional()
+            from close in Parse.Char('@')
+            select Tuple.Create(name, optional.IsDefined);
 
         internal static Parser<AST.Expander> ExpanderWithNoArguments =>
             from dot in Parse.Char('.')
@@ -55,7 +59,7 @@ namespace NMatcher.Parsing
         internal static Parser<AST.Type> Expression =>
             from type in Type
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).XMany()
-            select new AST.Type(type, expanders);
+            select new AST.Type(type.Item1, expanders, type.Item2);
 
         public static AST.Type ParseExpression(string input) =>
             Expression.Parse(input);

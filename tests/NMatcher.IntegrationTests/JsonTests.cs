@@ -122,6 +122,24 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
+        public void it_matches_with_optional_missing()
+        {
+            var matcher = new Matcher();
+            var res = matcher.MatchJson(@"{""id"" : 1000}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
+
+            Assert.True(res.Successful);
+        }
+
+        [Fact]
+        public void it_matches_with_optional_not_missing()
+        {
+            var matcher = new Matcher();
+            var res = matcher.MatchJson(@"{""id"" : 1000, ""city"": ""NY""}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
+
+            Assert.True(res.Successful);
+        }
+
+        [Fact]
         public void it_doesnt_array_with_expressions_when_it_fails_evaulation()
         {
             var matcher = new Matcher();
@@ -149,7 +167,7 @@ namespace NMatcher.IntegrationTests
                             ""_arr"" : [1, 2, 3, 4],
                             ""_arr2"" : [""fuu"", ""bar""],
                             ""_date"" : ""2018-01-01"",
-                            ""_endDate"": ""2017-12-01T00:00:00""
+                            ""_endDate"": ""2017-12-01T00:00:00"",
                         }
                     }
                 }",
@@ -169,7 +187,8 @@ namespace NMatcher.IntegrationTests
                             ""_arr"" : [1, 2, 3, 4],
                             ""_arr2"" : ""@array@"",
                             ""_date"" : ""@string@.IsDateTime()"",
-                            ""_endDate"": ""@string@.IsDateTime()""
+                            ""_endDate"": ""@string@.IsDateTime()"",
+                            ""_mayNotBeHere"": ""@string?@.Contains('imagine')""
                         }
                     }
                 }"
