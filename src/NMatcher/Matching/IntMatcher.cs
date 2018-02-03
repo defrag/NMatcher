@@ -40,7 +40,7 @@ namespace NMatcher.Matching
                 return Result.Success();
             }
 
-            return Result.Failure($"{value} is not match all the expanders.");
+            return Result.Failure($"{value} did not match all the expanders.");
         }
     }
 }
