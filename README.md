@@ -99,7 +99,7 @@ matcher.MatchExpression(null, "@string?@.Contains('str')"); //optional
 #### Int matching:
 ```csharp
 var matcher = new Matcher();
-matcher.MatchExpression("1000", "@int@");
+matcher.MatchExpression(1000, "@int@");
 matcher.MatchExpression(11, "@int@.GreaterThan(10)");
 matcher.MatchExpression(11, "@int@.LowerThan(100)");
 matcher.MatchExpression(11, "@int@.GreaterThan(10).LowerThan(20)");
