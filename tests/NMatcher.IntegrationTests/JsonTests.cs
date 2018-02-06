@@ -374,5 +374,21 @@ namespace NMatcher.IntegrationTests
             Assert.False(result.Successful);
             Assert.Equal("NY did not match LA at path subnode.city.", result.ErrorMessage);
         }
+
+        [Fact]
+        public void it_doesnt_match_array_with_elements_to_empty_array()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"[{""id"" : 1}]", @"[]");
+            Assert.False(result.Successful);
+        }
+
+        [Fact]
+        public void it_doesnt_match_empty_array_to_array_with_elements()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"[]", @"[{""id"" : 1}]");
+            Assert.False(result.Successful);
+        }
     }
 }
