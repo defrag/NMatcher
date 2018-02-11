@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NMatcher.Json.Pairing
+namespace NMatcher.Matching.Json
 {
-    internal sealed class Pair
+    internal sealed class JsonPair
     {
-        public Pair(object actual, object expected, string path, bool isEqual)
+        public JsonPair(object actual, object expected, string path, bool isEqual)
         {
             Actual = actual;
             Expected = expected;
