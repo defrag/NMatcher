@@ -175,7 +175,7 @@ public void it_matches_xml()
     Assert.True(new Matcher().MatchXml(actual, expected));
 }
 ```
-Note: Xml matching used newtonsoft SerializeXmlNode (net46) or SerializeXNode (netstandard) to transform xml to json and then match it using json matcher. Those methods does produce different results depends on the attributes given node is having. Be aware that xml matching will serve for now only basic functionality. Something like optional attributes and similar wont be supported initially.
+**Note:** Xml matching is using Newtonsoft.Json *SerializeXmlNode* (net46) or *SerializeXNode* (netstandard) methods to transform xml to json and then match it using json matcher. Those methods does produce different results depends on the attributes given node is having. Be aware that xml matching will serve for now only basic functionality. Something like optional attributes and similar wont be supported initially.
 
 ### Integration with test frameworks
 NMatcher doesn't come with out of the box integration with test frameworks, but its super easy to roll your own version. Here is a sample with fluent assertions:
