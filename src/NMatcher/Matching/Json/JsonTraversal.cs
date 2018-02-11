@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NMatcher.Json
+namespace NMatcher.Matching.Json
 {
     public static class JsonTraversal
     {

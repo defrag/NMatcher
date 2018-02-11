@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.IO;
 
-namespace NMatcher.Json
+namespace NMatcher.Matching.Json
 {
     public static class JsonTokenLoader
     {
