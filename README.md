@@ -148,6 +148,35 @@ matcher.MatchExpression(new string[] { "fuu", "bar", "baz" }, "@array@");
 #### JSON matching:
 This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test. All checks can be wrapped with optional condition (eg @string?@), which will ommit assertion when expected node was not found in actual json.
 
+#### Xml matching:
+```csharp
+[Fact]
+public void it_matches_xml()
+{
+    var actual = @"<note>
+        <to id=""fuu"" at2=""bar"">Tove</to>
+        <heading id=""h2"">
+            <subheader subid=""s2"">fooo</subheader>
+            <mainheader>Reminder</mainheader>
+        </heading>
+        <body>Don't forget me this weekend!</body>
+        </note>";
+
+    var expected = @"<note>
+        <to id=""@string@"" at2=""@string@"">Tove</to>
+        <from>@string?@</from>
+        <heading id=""@string@"">
+            <subheader subid=""@string@"">@string@</subheader>
+            <mainheader>@string@</mainheader>
+        </heading>
+        <body>@string@</body>
+        </note>";
+
+    Assert.True(new Matcher().MatchXml(actual, expected));
+}
+```
+Note: Xml matching used newtonsoft SerializeXmlNode (net46) or SerializeXNode (netstandard) to transform xml to json and then match it using json matcher. Those methods does produce different results depends on the attributes given node is having. Be aware that xml matching will serve for now only basic functionality. Something like optional attributes and similar wont be supported initially.
+
 ### Integration with test frameworks
 NMatcher doesn't come with out of the box integration with test frameworks, but its super easy to roll your own version. Here is a sample with fluent assertions:
 
