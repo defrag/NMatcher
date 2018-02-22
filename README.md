@@ -136,7 +136,7 @@ matcher.MatchExpression(false, "@any@");
 var matcher = new Matcher();
 matcher.MatchExpression("843475f5-f7c9-4a28-b028-a3a7dc456e91", "@guid@");
 matcher.MatchExpression("C56A4180-65AA-42EC-A945-5FD21DEC0538", "@guid@");
-matcher.MatchExpression(null, "@optional?@)"); //optional
+matcher.MatchExpression(null, "@guid?@)"); //optional
 ```
 #### Array matching:
 ```csharp
