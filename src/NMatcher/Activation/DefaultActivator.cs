@@ -5,6 +5,7 @@ using NMatcher.Matching;
 using Ints = NMatcher.Matching.Expanders.Int;
 using Strings = NMatcher.Matching.Expanders.String;
 using Doubles = NMatcher.Matching.Expanders.Double;
+using System.Reflection;
 
 namespace NMatcher.Activation
 {
@@ -19,8 +20,9 @@ namespace NMatcher.Activation
                     new Dictionary<string, Type>()
                     {
                         { "Contains", typeof(Strings.Contains) },
-                        { "IsDateTime", typeof(Strings.IsDateTime) }
-                    } 
+                        { "IsDateTime", typeof(Strings.IsDateTime) },
+                        { "OneOf", typeof(Strings.OneOf) }
+                    }
                 )
             },
             {
@@ -93,15 +95,21 @@ namespace NMatcher.Activation
                )
                .Select(_ => Activator.CreateInstance(_.Item1, _.Item2.ToArray()) );
 
-   
-            var instance = (IMatcher) Activator.CreateInstance(definition.Type, expanders.ToArray());
-
-            if (type.IsOptional)
+            try
             {
-                return (IMatcher)Activator.CreateInstance(typeof(OptionalMatcher), instance);
-            }
+                var instance = (IMatcher)Activator.CreateInstance(definition.Type, expanders.ToArray());
 
-            return instance;
+                if (type.IsOptional)
+                {
+                    return (IMatcher)Activator.CreateInstance(typeof(OptionalMatcher), instance);
+                }
+
+                return instance;
+            }
+            catch (TargetInvocationException e)
+            {
+                throw e.InnerException;
+            }  
         }
     }
 }

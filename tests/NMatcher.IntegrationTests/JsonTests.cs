@@ -158,6 +158,7 @@ namespace NMatcher.IntegrationTests
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""80-000"",
+                        ""state"" : ""enabled"",
                         ""meta"" : {
                             ""name"" : ""fuuuuuu"",
                             ""shipping"": 99.99,
@@ -178,6 +179,7 @@ namespace NMatcher.IntegrationTests
                     ""subnode"" : {
                         ""city"" : ""NY"",
                         ""zipCode"" : ""@string@"",
+                        ""state"" : ""@string@.OneOf('enabled', 'disabled')"",
                         ""meta"" : {
                             ""name"" : ""@string@.Contains('fuu')"",
                             ""shipping"": ""@double@"",
