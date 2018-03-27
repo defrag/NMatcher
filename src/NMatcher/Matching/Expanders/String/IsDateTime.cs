@@ -12,14 +12,12 @@ namespace NMatcher.Matching.Expanders.String
 
         public bool Matches(string value)
         {
-            DateTime dateValue;
-
             try
             {
                 var result = DateTime.Parse(value, CultureInfo.InvariantCulture);
                 return Result.Success();
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 return Result.Failure($"Value '{value} is not a valid DateTime.'");
             }

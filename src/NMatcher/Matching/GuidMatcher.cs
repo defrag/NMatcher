@@ -11,7 +11,7 @@ namespace NMatcher.Matching
                 Guid.Parse(value.ToString());
                 return Result.Success();
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 return Result.Failure($"{value} is not a valid Guid.");
             }
