@@ -23,6 +23,7 @@ public void it_matches_nested_json()
             ""subnode"" : {
                 ""city"" : ""NY"",
                 ""zipCode"" : ""80-000"",
+                ""status"" : ""enabled"",
                 ""meta"" : {
                     ""name"" : ""fuuuuuu"",
                     ""shipping"": 99.99,
@@ -41,6 +42,7 @@ public void it_matches_nested_json()
             ""subnode"" : {
                 ""city"" : ""NY"",
                 ""zipCode"" : ""@string@"",
+                ""status"" : ""@string@.OneOf('enabled', 'disabled')"",
                 ""meta"" : {
                     ""name"" : ""@string@.Contains('fuu')"",
                     ""shipping"": ""@double@"",
@@ -92,6 +94,7 @@ matcher.MatchJson(@"{""enabled"" : true}", @"{""enabled"" : ""@bool@""}"); // ma
 var matcher = new Matcher();
 matcher.MatchExpression("2018-01-01 11:00:12", "@string@.IsDateTime()");
 matcher.MatchExpression("str", "@string@");
+matcher.MatchExpression("foobar", "@string@.OneOf('foobar', 'baz')")
 matcher.MatchExpression("string", "@string@.Contains('str')");
 matcher.MatchExpression(null, "@string?@.Contains('str')"); //optional
 ```
