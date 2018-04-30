@@ -392,5 +392,23 @@ namespace NMatcher.IntegrationTests
             var result = matcher.MatchJson(@"[]", @"[{""id"" : 1}]");
             Assert.False(result.Successful);
         }
+
+        [Fact]
+        public void it_doesnt_match_int_with_double()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{ ""id"" : 1.0}");
+            Assert.False(result.Successful);
+            Assert.Equal("1 did not match 1.0 at path id.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public void it_doesnt_match_double_with_int()
+        {
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
+            Assert.False(result.Successful);
+            Assert.Equal("2.0 did not match 2 at path id.", result.ErrorMessage);
+        }
     }
 }
