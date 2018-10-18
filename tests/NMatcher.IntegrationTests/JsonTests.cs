@@ -184,7 +184,7 @@ namespace NMatcher.IntegrationTests
                             ""name"" : ""@string@.Contains('fuu')"",
                             ""shipping"": ""@double@"",
                             ""enabled"" : ""@bool@"",
-                            ""_link"" : ""@any@"",
+                            ""_link"" : ""http://example.com?page=@int@"",
                             ""_something"" : ""@null@"",
                             ""_arr"" : [1, 2, 3, 4],
                             ""_arr2"" : ""@array@"",

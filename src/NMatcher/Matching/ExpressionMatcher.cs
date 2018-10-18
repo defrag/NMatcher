@@ -1,6 +1,7 @@
 ﻿using NMatcher.Activation;
 using NMatcher.Parsing;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NMatcher.Matching
@@ -8,6 +9,7 @@ namespace NMatcher.Matching
     public class ExpressionMatcher
     {
         private readonly IActivator _activator;
+
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
 
         public ExpressionMatcher(IActivator activator)
@@ -22,10 +24,47 @@ namespace NMatcher.Matching
 
         public Result MatchExpression(object value, string expression)
         {
-            var type = ExpressionParser.ParseExpression(expression);
-            var inst = _activator.CreateMatcherInstance(type);
+            var expressions = ExpressionParser.ParseExpressions(expression);
 
-            return inst.Match(value);
+            if (expressions.Count() == 1 || value is null)
+            {
+                return expressions
+                    .OfType<Parsing.AST.Type>()
+                    .Select(_activator.CreateMatcherInstance)
+                    .First()
+                    .Match(value);
+            }
+
+            var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
+            if (false == regex.IsMatch(value.ToString()))
+            {
+                return Result.Failure($"Value {value} does not match expression {expression}.");
+            }
+
+            var results = regex
+                .Match(value.ToString())
+                .Groups
+                .Cast<Group>()
+                .Skip(1)
+                .Select(_ => ExpressionParser.ParseLiteral(_.ToString()))
+                .Select(_ => _.Value);
+
+            var parts = expressions
+                .OfType<Parsing.AST.Type>()
+                .Select(_activator.CreateMatcherInstance)
+                .Zip(results, (m, v) => m.Match(v));
+
+            return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success(); 
         }
+
+        private static string NodeToRegex(Parsing.AST.INode node)
+        {
+            switch (node)
+            {
+                case Parsing.AST.Literal l: return $"(?:{Regex.Escape(l.ToString())})";
+                default: return $"(.*)";
+            }
+        }
+
     }
 }
