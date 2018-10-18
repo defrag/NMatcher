@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NMatcher.Parsing.AST
 {
-    public sealed class Type
+    public sealed class Type : INode
     {
         public Type(string name, IEnumerable<Expander> expanders, bool isOptional = false)
         {

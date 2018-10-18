@@ -89,5 +89,12 @@ namespace NMatcher.Parsing
             var result = ExpressionParser.Expression.Parse("@string@.Contains(\"foo\", 2)");
             Assert.Equal("Contains", result.Expanders.ToList()[0].Name);
         }
+
+        [Fact]
+        public void it_parses_multiple_expressions_separated_by_literals()
+        {
+            var result = ExpressionParser.Expressions.Parse("http://@string@.Contains(\"amazon\")/dp/@string@?page=@int@");
+            Assert.Equal(6, result.Count());
+        }
     }
 }

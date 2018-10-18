@@ -61,9 +61,16 @@ namespace NMatcher.Parsing
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).XMany()
             select new AST.Type(type.Item1, expanders, type.Item2);
 
+
+        internal static Parser<AST.Literal> StringLiteral =>
+            from txt in Parse.AnyChar.Except(Expression).Many().Text()
+            select new AST.Literal(txt);
+
+        internal static Parser<IEnumerable<AST.INode>> Expressions =>
+            from expr in Expression.Or<AST.INode>(StringLiteral).Many()
+            select expr;
+
         public static AST.Type ParseExpression(string input) =>
             Expression.Parse(input);
     }
-
-    
 }

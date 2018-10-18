@@ -8,7 +8,7 @@ namespace NMatcher.Parsing.AST
         public Expander(string name, IEnumerable<Argument> args)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            Args = args;
+            Args = args ?? throw new ArgumentNullException(nameof(args));
         }
 
         public string Name { get; }
