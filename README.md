@@ -148,6 +148,14 @@ matcher.MatchExpression(new int[] { 1, 2, 3 }, "@array@");
 matcher.MatchExpression(new string[] { "fuu", "bar", "baz" }, "@array@");
 ```
 
+#### Compound matching:
+```csharp
+var matcher = new Matcher();
+matcher.MatchExpression("https://amazon.com/dp/1SOTO", "https://@string@.Contains(\"amazon\")/dp/@string@")
+matcher.MatchExpression("https://amazon.com?isFoo=true", "https://@string@.Contains(\"amazon\")?isFoo=@bool@")
+matcher.MatchExpression("https://amazon.com?page=1", "https://@string@.Contains(\"amazon\")?page=@int@")
+```
+
 #### JSON matching:
 This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test. All checks can be wrapped with optional condition (eg @string?@), which will ommit assertion when expected node was not found in actual json.
 
