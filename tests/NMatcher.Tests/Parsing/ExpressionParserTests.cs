@@ -1,4 +1,5 @@
-﻿using Sprache;
+﻿using NMatcher.Parsing.AST;
+using Sprache;
 using System.Linq;
 using Xunit;
 
@@ -93,8 +94,15 @@ namespace NMatcher.Parsing
         [Fact]
         public void it_parses_multiple_expressions_separated_by_literals()
         {
-            var result = ExpressionParser.Expressions.Parse("http://@string@.Contains(\"amazon\")/dp/@string@?page=@int@");
+            var result = ExpressionParser.Expressions.Parse("http://@string@.Contains(\"amazon\")/dp/@string@?page=@int@").ToList();
             Assert.Equal(6, result.Count());
+            Assert.IsType<Literal>(result[0]);
+            Assert.IsType<Type>(result[1]);
+            Assert.IsType<Literal>(result[2]);
+            Assert.IsType<Type>(result[3]);
+            Assert.IsType<Literal>(result[4]);
+            Assert.IsType<Type>(result[5]);
+
         }
     }
 }

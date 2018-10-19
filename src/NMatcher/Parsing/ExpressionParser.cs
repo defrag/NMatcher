@@ -70,6 +70,9 @@ namespace NMatcher.Parsing
             from expr in Expression.Or<AST.INode>(StringLiteral).Many()
             select expr;
 
+        internal static IEnumerable<AST.INode> ParseExpressions(string input) =>
+            Expressions.Parse(input);
+
         public static AST.Type ParseExpression(string input) =>
             Expression.Parse(input);
     }

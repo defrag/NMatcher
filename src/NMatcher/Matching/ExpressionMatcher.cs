@@ -1,6 +1,7 @@
 ﻿using NMatcher.Activation;
 using NMatcher.Parsing;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NMatcher.Matching
@@ -22,10 +23,39 @@ namespace NMatcher.Matching
 
         public Result MatchExpression(object value, string expression)
         {
-            var type = ExpressionParser.ParseExpression(expression);
-            var inst = _activator.CreateMatcherInstance(type);
+            var expressions = ExpressionParser.ParseExpressions(expression);
 
-            return inst.Match(value);
+            if (false == value is string)
+            {
+                return expressions
+                    .OfType<Parsing.AST.Type>()
+                    .Select(_activator.CreateMatcherInstance)
+                    .First()
+                    .Match(value);
+            }
+
+            var result = new Regex(string.Join("", expressions.Select(NodeToRegex)))
+                .Match(value.ToString())
+                .Groups
+                .Cast<Group>()
+                .Skip(1)
+                .Select(_ => _.ToString());
+
+            var parts = expressions
+                .OfType<Parsing.AST.Type>()
+                .Select(_activator.CreateMatcherInstance)
+                .Zip(result, (m, v) => m.Match(v));
+
+            return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success(); 
+        }
+
+        private static string NodeToRegex(Parsing.AST.INode node)
+        {
+            switch (node)
+            {
+                case Parsing.AST.Literal l: return $"(?:{Regex.Escape(l.Value)})";
+                default: return $"(.*)";
+            }
         }
     }
 }
