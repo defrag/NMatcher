@@ -9,6 +9,7 @@ namespace NMatcher.Matching
     public class ExpressionMatcher
     {
         private readonly IActivator _activator;
+
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
 
         public ExpressionMatcher(IActivator activator)
@@ -25,7 +26,7 @@ namespace NMatcher.Matching
         {
             var expressions = ExpressionParser.ParseExpressions(expression);
 
-            if (false == value is string)
+            if (expressions.Count() == 1 || false == value is string)
             {
                 return expressions
                     .OfType<Parsing.AST.Type>()
@@ -34,17 +35,24 @@ namespace NMatcher.Matching
                     .Match(value);
             }
 
-            var result = new Regex(string.Join("", expressions.Select(NodeToRegex)))
+            var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
+            if (false == regex.IsMatch(value.ToString()))
+            {
+                return Result.Failure($"Value {value} does not match expression {expression}.");
+            }
+
+            var results = regex
                 .Match(value.ToString())
                 .Groups
                 .Cast<Group>()
                 .Skip(1)
-                .Select(_ => _.ToString());
+                .Select(_ => ExpressionParser.ParseLiteral(_.ToString()))
+                .Select(_ => _.Value);
 
             var parts = expressions
                 .OfType<Parsing.AST.Type>()
                 .Select(_activator.CreateMatcherInstance)
-                .Zip(result, (m, v) => m.Match(v));
+                .Zip(results, (m, v) => m.Match(v));
 
             return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success(); 
         }
@@ -53,9 +61,10 @@ namespace NMatcher.Matching
         {
             switch (node)
             {
-                case Parsing.AST.Literal l: return $"(?:{Regex.Escape(l.Value)})";
+                case Parsing.AST.Literal l: return $"(?:{Regex.Escape(l.ToString())})";
                 default: return $"(.*)";
             }
         }
+
     }
 }

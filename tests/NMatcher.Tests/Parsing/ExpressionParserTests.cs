@@ -102,7 +102,40 @@ namespace NMatcher.Parsing
             Assert.IsType<Type>(result[3]);
             Assert.IsType<Literal>(result[4]);
             Assert.IsType<Type>(result[5]);
+        }
 
+        [Fact]
+        public void it_parses_int_literals()
+        {
+            var result = ExpressionParser.Literal.Parse("10");
+            Assert.Equal(Literal.LiteralType.Int, result.Type);
+        }
+
+        [Fact]
+        public void it_parses_double_literals()
+        {
+            var result = ExpressionParser.Literal.Parse("10.00");
+            Assert.Equal(Literal.LiteralType.Double, result.Type);
+        }
+
+        [Fact]
+        public void it_parses_bool_literals()
+        {
+            var result = ExpressionParser.Literal.Parse("true");
+            Assert.Equal(Literal.LiteralType.Bool, result.Type);
+
+            var result2 = ExpressionParser.Literal.Parse("false");
+            Assert.Equal(Literal.LiteralType.Bool, result2.Type);
+        }
+
+        [Fact]
+        public void it_parses_string_literals()
+        {
+            var result = ExpressionParser.Literal.Parse("amazon.com");
+            Assert.Equal(Literal.LiteralType.String, result.Type);
+
+            var result2 = ExpressionParser.Literal.Parse("12foobar");
+            Assert.Equal(Literal.LiteralType.String, result2.Type);
         }
     }
 }
