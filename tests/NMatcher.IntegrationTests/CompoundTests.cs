@@ -29,5 +29,12 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             Assert.True(matcher.MatchExpression("https://amazon.com?isFoo=true", "https://@string@.Contains(\"amazon\")?isFoo=@bool@").Successful);
         }
+
+        [Fact]
+        public void it_handles_nulls()
+        {
+            var matcher = new Matcher();
+            Assert.False(matcher.MatchExpression(null, "https://@string@.Contains(\"amazon\")?isFoo=@bool@").Successful);
+        }
     }
 }

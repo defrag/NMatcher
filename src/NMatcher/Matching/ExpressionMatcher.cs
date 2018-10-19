@@ -26,7 +26,7 @@ namespace NMatcher.Matching
         {
             var expressions = ExpressionParser.ParseExpressions(expression);
 
-            if (expressions.Count() == 1 || false == value is string)
+            if (expressions.Count() == 1 || value is null)
             {
                 return expressions
                     .OfType<Parsing.AST.Type>()
