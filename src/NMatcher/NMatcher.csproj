@@ -14,8 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/defrag/NMatcher</RepositoryUrl>
     <PackageProjectUrl>https://github.com/defrag/NMatcher</PackageProjectUrl>
-    <PackageLicenceUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenceUrl>
     <PackageTags>json;testing;matching;api</PackageTags>
+    <PackageLicenseUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
