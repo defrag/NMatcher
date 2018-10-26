@@ -410,5 +410,26 @@ namespace NMatcher.IntegrationTests
             Assert.False(result.Successful);
             Assert.Equal("2.0 did not match 2 at path id.", result.ErrorMessage);
         }
+
+        [Fact]
+        public void it_works_with_empty_array_in_actual_thats_not_matched_in_expected()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                 {
+                    ""Foo"" : 1,
+                    ""SomeArray"": []
+                }",
+                @"
+                {
+                    ""Foo"" : 1
+                }"
+            );
+
+            Assert.False(result.Successful);
+            Assert.Equal("Expected value did not appear at path SomeArray.", result.ErrorMessage);
+        }
     }
 }

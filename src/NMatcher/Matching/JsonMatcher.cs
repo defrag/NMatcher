@@ -62,20 +62,23 @@ namespace NMatcher.Matching
             var actualJson = JsonTokenLoader.LoadJson(actual);
             var expectedJson = JsonTokenLoader.LoadJson(expected);
             var actualPaths = JsonTraversal.AccumulatePaths(actualJson).ToList();
+            var expectedPaths = JsonTraversal.AccumulatePaths(expectedJson).ToList();
             var resolvedPaths = new List<string>();
             var pairs = new List<JsonPair>();
 
-            JsonTraversal.TraverseJson(expectedJson, token =>
+            JsonTraversal.TraverseAllPaths(expectedJson, token =>
             {
                 var expectedNode = expectedJson.SelectToken(token.Path);
                 var currentNode = actualJson.SelectToken(token.Path);
 
                 object actualValue = null;
                 var accumulate = token;
+                
                 if (null != currentNode)
                 {
                     actualValue = currentNode.Type == JTokenType.Array
                        ? currentNode.Children()
+                           .Where(_ => _ is JValue)
                            .Select(_ => (JValue)_)
                            .Select(_ => _.Value)
                            .ToArray()
@@ -92,7 +95,7 @@ namespace NMatcher.Matching
                     actualPaths.Add(expectedNode.Path);
                 }
                 
-                var expectedValue = ((JValue)expectedNode)?.Value;
+                var expectedValue = expectedNode is JValue ? ((JValue)expectedNode)?.Value : null;
                 var comparisonResult = currentNode != null ? currentNode.Equals(expectedNode) : false;
                 pairs.Add(new JsonPair(actualValue, expectedValue, token.Path, comparisonResult));
 
