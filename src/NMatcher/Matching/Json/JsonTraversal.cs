@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NMatcher.Matching.Json
 {
@@ -8,35 +9,53 @@ namespace NMatcher.Matching.Json
     {
         public static void TraverseJson(JToken node, Action<JToken> action)
         {
-            if (node.Type == JTokenType.Object)
+            TraverseAllPaths(node, t =>
             {
-                foreach (JProperty child in node.Children<JProperty>())
+                if (t.Type != JTokenType.Array)
                 {
-                    TraverseJson(child.Value, action);
+                    action(t);
                 }
-            }
-            else if (node.Type == JTokenType.Array)
-            {
-                foreach (JToken child in node.Children())
-                {
-                    TraverseJson(child, action);
-                }
-            }
-            else
-            {
-                action((JToken)node);
-            }
+            });
         }
 
         internal static IEnumerable<string> AccumulatePaths(JToken token)
         {
             var res = new List<string>();
-            TraverseJson(token, node =>
+            TraverseAllPaths(token, node =>
             {
                 res.Add(node.Path);
             });
 
             return res;
+        }
+
+        internal static void TraverseAllPaths(JToken node, Action<JToken> action)
+        {
+            if (node.Type == JTokenType.Object)
+            {
+                foreach (JProperty child in node.Children<JProperty>())
+                {
+                    TraverseAllPaths(child.Value, action);
+                }
+            }
+            else if (node.Type == JTokenType.Array)
+            {
+                var all = node.Children();
+
+                if (all.Count() == 0)
+                {
+                    action(node);
+                }
+
+                foreach (JToken child in all)
+                {
+                    TraverseAllPaths(child, action);
+                }
+            }
+            else
+            {
+                action(node);
+            }
         }
     }
 }
