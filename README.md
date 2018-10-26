@@ -24,6 +24,7 @@ public void it_matches_nested_json()
                 ""city"" : ""NY"",
                 ""zipCode"" : ""80-000"",
                 ""status"" : ""enabled"",
+                ""url"" : ""http://example.com/foo/bar?query=q"",
                 ""meta"" : {
                     ""name"" : ""fuuuuuu"",
                     ""shipping"": 99.99,
@@ -43,6 +44,7 @@ public void it_matches_nested_json()
                 ""city"" : ""NY"",
                 ""zipCode"" : ""@string@"",
                 ""status"" : ""@string@.OneOf('enabled', 'disabled')"",
+                ""url"" : ""http://@string@.Contains('example')/foo/@string@?query=@string@"",
                 ""meta"" : {
                     ""name"" : ""@string@.Contains('fuu')"",
                     ""shipping"": ""@double@"",
