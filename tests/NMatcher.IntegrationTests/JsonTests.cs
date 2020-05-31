@@ -431,5 +431,23 @@ namespace NMatcher.IntegrationTests
             Assert.False(result.Successful);
             Assert.Equal("Expected value did not appear at path SomeArray.", result.ErrorMessage);
         }
+
+        [Fact]
+        public void it_works_with_same_json_for_array_in_object()
+        {
+            var testJson = @"{""test"" : [1, 2 ,3]}";
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(testJson, testJson);
+            Assert.True(result.Successful);
+        }
+
+        [Fact]
+        public void it_works_with_same_json_for_empty_array()
+        {
+            var testJson = @"{""test"" : []}";
+            var matcher = new Matcher();
+            var result = matcher.MatchJson(testJson, testJson);
+            Assert.True(result.Successful);
+        }
     }
 }
