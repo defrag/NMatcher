@@ -95,8 +95,8 @@ namespace NMatcher.Matching
                     actualPaths.Add(expectedNode.Path);
                 }
                 
-                var expectedValue = expectedNode is JValue ? ((JValue)expectedNode)?.Value : null;
-                var comparisonResult = currentNode != null ? currentNode.Equals(expectedNode) : false;
+                var expectedValue = expectedNode is JValue value ? value?.Value : null;
+                var comparisonResult = currentNode != null && JToken.DeepEquals(currentNode, expectedNode);
                 pairs.Add(new JsonPair(actualValue, expectedValue, token.Path, comparisonResult));
 
                 resolvedPaths.AddRange(JsonTraversal.AccumulatePaths(accumulate));
