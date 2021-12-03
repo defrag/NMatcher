@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Xml.Linq;
 #if NETSTANDARD1_3 || NETSTANDARD2_0
 using System.Xml.Linq;
 #else
@@ -25,14 +26,8 @@ namespace NMatcher.Matching
 
         private string ToJson(string xml)
         {
-#if NETSTANDARD1_3 || NETSTANDARD2_0
             var doc = XDocument.Parse(xml);
             return JsonConvert.SerializeXNode(doc);
-#else
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return JsonConvert.SerializeXmlNode(doc);
-#endif
         }
     }
 }
