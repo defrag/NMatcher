@@ -1,20 +1,32 @@
-﻿using System;
-
-namespace NMatcher.Matching.Json
+﻿namespace NMatcher.Matching.Json
 {
-    internal sealed class JsonPair
+    internal sealed record JsonPair(
+        object Actual,
+        object Expected,
+        string Path,
+        bool IsEqual,
+        JsonPair.ComparisonOrigin Origin = JsonPair.ComparisonOrigin.Scalar)
     {
-        public JsonPair(object actual, object expected, string path, bool isEqual)
+        public enum ComparisonOrigin
         {
-            Actual = actual;
-            Expected = expected;
-            Path = path ?? throw new ArgumentNullException(nameof(path));
-            IsEqual = isEqual;
+            Scalar,
+            Expression
         }
-
-        public object Actual { get; }
-        public object Expected { get; }
-        public string Path { get; }
-        public bool IsEqual { get; }
+        
+        public string ActualAsString =>  Actual is null ? "null" : Actual.ToString();
+        public string ActualType =>  Actual is null ? "null" : Actual.GetType().ToString();
+        public string ExpectedAsString =>  Expected is null ? "null" : Expected.ToString();
+        public string ExpectedType 
+        {
+            get
+            {
+                if (Expected is null)
+                {
+                    return "null";
+                }
+                
+                return Origin == ComparisonOrigin.Scalar ? Expected.GetType().ToString() : "Expression";
+            } 
+        }
     }
 }

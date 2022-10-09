@@ -236,7 +236,7 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("80-000 (System.String) is not a valid int.", result.ErrorMessage);
+            Assert.Equal("Actual value \"80-000\" (System.String) did not match \"@int@\" (Expression) at path \".subnode.zipCode\".", result.ErrorMessage);
         }
 
         [Fact]
