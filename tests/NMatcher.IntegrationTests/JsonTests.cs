@@ -242,7 +242,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson2(
+            var result = matcher.MatchJson(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -273,7 +273,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_just_values_properly()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{""id"" : 2}");
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{""id"" : 2}");
             Assert.False(result.Successful);
             Assert.Equal("Actual value \"1\" (System.Int32) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
         }
@@ -282,7 +282,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_matches_with_keys_that_doesnt_exist()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{}");
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{}");
             Assert.False(result.Successful);
             //Assert.Equal("Expected value did not appear at path id.", result.ErrorMessage);
         }
@@ -292,7 +292,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson2(
+            var result = matcher.MatchJson(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -323,7 +323,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson2(
+            var result = matcher.MatchJson(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -354,7 +354,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson2(
+            var result = matcher.MatchJson(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -379,7 +379,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_array_with_elements_to_empty_array()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"[{""id"" : 1}]", @"[]");
+            var result = matcher.MatchJson(@"[{""id"" : 1}]", @"[]");
             Assert.False(result.Successful);
         }
 
@@ -387,7 +387,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_empty_array_to_array_with_elements()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"[]", @"[{""id"" : 1}]");
+            var result = matcher.MatchJson(@"[]", @"[{""id"" : 1}]");
             Assert.False(result.Successful);
         }
 
@@ -395,7 +395,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_int_with_double()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{ ""id"" : 1.0}");
+            var result = matcher.MatchJson(@"{""id"" : 1}", @"{ ""id"" : 1.0}");
             Assert.False(result.Successful);
         }
 
@@ -403,7 +403,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_double_with_int()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
+            var result = matcher.MatchJson(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
             Assert.False(result.Successful);
             Assert.Equal("Actual value \"2\" (System.Double) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
         }
@@ -413,7 +413,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson2(
+            var result = matcher.MatchJson(
                 @"
                  {
                     ""Foo"" : 1,
@@ -434,7 +434,7 @@ namespace NMatcher.IntegrationTests
         {
             var testJson = @"{""test"" : [1, 2 ,3]}";
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(testJson, testJson);
+            var result = matcher.MatchJson(testJson, testJson);
             Assert.True(result.Successful);
         }
 
@@ -443,7 +443,7 @@ namespace NMatcher.IntegrationTests
         {
             var testJson = @"{""test"" : []}";
             var matcher = new Matcher();
-            var result = matcher.MatchJson2(testJson, testJson);
+            var result = matcher.MatchJson(testJson, testJson);
             Assert.True(result.Successful);
         }
     }

@@ -34,16 +34,24 @@ namespace NMatcher.Matching
             {
                 var expectedNode = expectedCollected.AtPath(element.Path);
                 var actualNode = actualCollected.AtPath(element.Path);
-
+                
                 var expectedValue = expectedNode!.ParseValue();
                 var actualValue = actualNode?.ParseValue();
 
                 expectedResolvedPaths.Add(expectedNode.Path);
+                
+                if (expectedNode.Element.ValueKind == JsonValueKind.Array && actualNode?.Element.ValueKind == JsonValueKind.Array)
+                {
+                    continue;
+                }
+                
                 if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
                 {
                     var result = _expressionMatcher.MatchExpression(actualValue, expectedValue.ToString());
                     pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful));
-                    
+
+                    var missing = actualCollected.Elements.Select(s => s.Path).Where(p => p.StartsWith(element.Path)).ToList();
+                    expectedResolvedPaths.AddRange(missing);
                     actualPaths.Add(element.Path);
                     continue;
                 }
@@ -53,17 +61,9 @@ namespace NMatcher.Matching
                     continue;
                 }
                 
-                
-                var comparisonResult = false;
-                if (actualValue is IEnumerable a && expectedValue is IEnumerable b)
-                {
-                    continue;
-                }
-                
-                comparisonResult = expectedValue.Equals(actualValue);
+                var comparisonResult = expectedValue.Equals(actualValue);
                 pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, comparisonResult));
             }
-
             
             return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
         }

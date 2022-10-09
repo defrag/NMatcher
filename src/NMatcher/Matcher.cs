@@ -26,10 +26,5 @@ namespace NMatcher
         {
             return new JsonMatcher(new ExpressionMatcher(_activator), expected).Match(actual);
         }
-        
-        public Result MatchJson2(string actual, string expected)
-        {
-            return new JsonMatcher(new ExpressionMatcher(_activator), expected).Match(actual);
-        }
     }
 }

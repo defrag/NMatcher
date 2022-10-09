@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <Description>NMatcher is a simple library that eases tests (mostly with json).</Description>
     <Copyright>Copyright NMatcher Contributors 2017</Copyright>
     <AssemblyTitle>NMatcher</AssemblyTitle>
