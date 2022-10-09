@@ -57,7 +57,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression(99.99, "@int@");
             Assert.False(result.Successful);
-            Assert.Equal("99.99 is not a valid int.", result.ErrorMessage);
+            Assert.Equal("99.99 (System.Double) is not a valid int.", result.ErrorMessage);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace NMatcher.Matching
 
             if (!res)
             {
-                return Result.Failure($"{value} is not a valid int.");
+                return Result.Failure($"{value} ({value.GetType()}) is not a valid int.");
             }
 
             if (_expanders.All(_ => _.Matches((int)value)))

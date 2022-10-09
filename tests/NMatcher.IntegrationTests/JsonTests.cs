@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using NMatcher.IntegrationTests.XUnit;
+using NMatcher.Matching.Json;
 using Xunit;
 
 namespace NMatcher.IntegrationTests
@@ -12,88 +15,97 @@ namespace NMatcher.IntegrationTests
         [Fact]
         public void it_matches_json_with_string()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""id"" : ""some-uid-here""}", @"{""id"" : ""@string@""}"));
+            JsonAssert.MatchesJson(@"{""id"" : ""some-uid-here""}", @"{""id"" : ""@string@""}");
         }
 
         [Fact]
+        public void it_checks()
+        {
+            var json = @"
+                {
+                    ""id"" : ""some-uid-here"",
+                    ""uid"": ""C56A4180-65AA-42EC-A945-5FD21DEC0538"", 
+                    ""subnode"" : {
+                        ""city"" : ""NY"",
+                        ""zipCode"" : ""80-000"",
+                        ""state"" : ""enabled"",
+                        ""meta"" : {
+                            ""name"" : ""fuuuuuu"",
+                            ""shipping"": 99.99,
+                            ""enabled"" : false,
+                            ""_link"" : ""http://example.com?page=2"",
+                            ""_something"" : null,
+                            ""_arr"" : [1, 2, 3, 4],
+                            ""_arr2"" : [""fuu"", ""bar""],
+                            ""_date"" : ""2018-01-01"",
+                            ""_endDate"": ""2017-12-01T00:00:00"",
+                            ""_es"": null
+                        }
+                    }
+                }";
+            var paths = SystemJsonTraversal.CollectPaths(JsonDocument.Parse(json));
+
+        }
+
+        
+        [Fact]
         public void it_matches_with_int()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""id"" : 1000}", @"{""id"" : ""@int@""}"));
+            JsonAssert.MatchesJson(@"{""id"" : 1000}", @"{""id"" : ""@int@""}");
         }
 
         [Fact]
         public void it_matches_with_double()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""price"" : 100.00}", @"{""price"" : ""@double@""}"));
+            JsonAssert.MatchesJson(@"{""price"" : 100.00}", @"{""price"" : ""@double@""}");
         }
 
         [Fact]
         public void it_matches_with_bool()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""enabled"" : true}", @"{""enabled"" : ""@bool@""}"));
+            JsonAssert.MatchesJson(@"{""enabled"" : true}", @"{""enabled"" : ""@bool@""}");
         }
 
         [Fact]
         public void it_matches_with_wildcard()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""id"" : 1000}", @"{""id"" : ""@any@""}"));
+            JsonAssert.MatchesJson(@"{""id"" : 1000}", @"{""id"" : ""@any@""}");
         }
 
         [Fact]
         public void it_matches_with_null()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""id"" : null}", @"{""id"" : ""@null@""}"));
+            JsonAssert.MatchesJson(@"{""id"" : null}", @"{""id"" : ""@null@""}");
         }
 
         [Fact]
         public void it_matches_with_casual_null()
         {
-            var matcher = new Matcher();
-            var result = matcher.MatchJson(@"{""id"" : null}", @"{""id"" : null}");
-            Assert.True(result.Successful);
+            JsonAssert.MatchesJson(@"{""id"" : null}", @"{""id"" : null}");
         }
 
         [Fact]
         public void it_matches_empty_objects()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{}", @"{}"));
+            JsonAssert.MatchesJson(@"{}", @"{}");
         }
 
         [Fact]
         public void it_matches_with_guid()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson(@"{""id"" : ""c56a4180-65aa-42ec-a945-5fd21dec0538""}", @"{""id"" : ""@guid@""}"));
+            JsonAssert.MatchesJson(@"{""id"" : ""c56a4180-65aa-42ec-a945-5fd21dec0538""}", @"{""id"" : ""@guid@""}");
         }
 
         [Fact]
         public void it_matches_simple_array()
         {
-            var matcher = new Matcher();
-
-            Assert.True(matcher.MatchJson("[1,2,3]", "[1,2,3]"));
+            JsonAssert.MatchesJson("[1,2,3]", "[1,2,3]");
         }
 
         [Fact]
         public void it_matches_with_array_of_objects()
         {
-            var matcher = new Matcher();
-            var result = matcher.MatchJson(
+            JsonAssert.MatchesJson(
                 @"
                 [
                     {""id"": 100, ""enabled"" : true}
@@ -102,55 +114,43 @@ namespace NMatcher.IntegrationTests
                 [
                     {""id"": ""@int@"", ""enabled"" : ""@bool@""}
                 ]");
-
-            Assert.True(result.Successful);
         }
 
         [Fact]
         public void it_matches_with_different_arrays()
         {
-            var matcher = new Matcher();
-            Assert.False(matcher.MatchJson("[1,2,3,4]", "[1,2,3]"));
-            Assert.False(matcher.MatchJson("[1,2,3]", "[1,2,3,4]"));
+            JsonAssert.MatchesJson("[1,2,3,4]", "[1,2,3]");
+            JsonAssert.MatchesJson("[1,2,3]", "[1,2,3,4]");
         }
 
         [Fact]
         public void it_matches_array_with_expressions()
         {
-            var matcher = new Matcher();
-            Assert.True(matcher.MatchJson("[1,2]", @"[""@int@"", ""@int@""]"));
+            JsonAssert.MatchesJson("[1,2]", @"[""@int@"", ""@int@""]");
         }
 
         [Fact]
         public void it_matches_with_optional_missing()
         {
-            var matcher = new Matcher();
-            var res = matcher.MatchJson(@"{""id"" : 1000}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
-
-            Assert.True(res.Successful);
+            JsonAssert.MatchesJson(@"{""id"" : 1000}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
         }
 
         [Fact]
         public void it_matches_with_optional_not_missing()
         {
-            var matcher = new Matcher();
-            var res = matcher.MatchJson(@"{""id"" : 1000, ""city"": ""NY""}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
-
-            Assert.True(res.Successful);
+            JsonAssert.MatchesJson(@"{""id"" : 1000, ""city"": ""NY""}", @"{""id"" : ""@int@"", ""city"": ""@string?@"" }");
         }
 
         [Fact]
         public void it_doesnt_array_with_expressions_when_it_fails_evaulation()
         {
-            var matcher = new Matcher();
-            Assert.False(matcher.MatchJson("[1,2]", @"[""@int@"", ""@string@""]"));
+            JsonAssert.NotMatchesJson("[1,2]", @"[""@int@"", ""@string@""]");
         }
         [Fact]
         public void it_matches_nested_json()
         {
-            var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            JsonAssert.MatchesJson(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -195,8 +195,6 @@ namespace NMatcher.IntegrationTests
                     }
                 }"
             );
-
-            Assert.True(result.Successful);
         }
 
         [Fact]
@@ -244,7 +242,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            var result = matcher.MatchJson2(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -272,19 +270,19 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
-        public void it_doesnt_just_values()
+        public void it_doesnt_match_just_values_properly()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"{""id"" : 1}", @"{""id"" : 2}");
+            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{""id"" : 2}");
             Assert.False(result.Successful);
-            Assert.Equal("1 did not match 2 at path id.", result.ErrorMessage);
+            Assert.Equal("Actual value \"1\" (System.Int32) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
         }
 
         [Fact]
         public void it_doesnt_matches_with_keys_that_doesnt_exist()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"{""id"" : 1}", @"{}");
+            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{}");
             Assert.False(result.Successful);
             Assert.Equal("Expected value did not appear at path id.", result.ErrorMessage);
         }
@@ -294,7 +292,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            var result = matcher.MatchJson2(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -325,7 +323,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            var result = matcher.MatchJson2(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -356,7 +354,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            var result = matcher.MatchJson2(
                 @"
                 {
                     ""id"" : ""some-uid-here"",
@@ -374,14 +372,14 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("NY did not match LA at path subnode.city.", result.ErrorMessage);
+            Assert.Equal("Actual value \"NY\" (System.String) did not match \"LA\" (System.String) at path \".subnode.city\".", result.ErrorMessage);
         }
 
         [Fact]
         public void it_doesnt_match_array_with_elements_to_empty_array()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"[{""id"" : 1}]", @"[]");
+            var result = matcher.MatchJson2(@"[{""id"" : 1}]", @"[]");
             Assert.False(result.Successful);
         }
 
@@ -389,7 +387,7 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_empty_array_to_array_with_elements()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"[]", @"[{""id"" : 1}]");
+            var result = matcher.MatchJson2(@"[]", @"[{""id"" : 1}]");
             Assert.False(result.Successful);
         }
 
@@ -397,18 +395,17 @@ namespace NMatcher.IntegrationTests
         public void it_doesnt_match_int_with_double()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"{""id"" : 1}", @"{ ""id"" : 1.0}");
+            var result = matcher.MatchJson2(@"{""id"" : 1}", @"{ ""id"" : 1.0}");
             Assert.False(result.Successful);
-            Assert.Equal("1 did not match 1.0 at path id.", result.ErrorMessage);
         }
 
         [Fact]
         public void it_doesnt_match_double_with_int()
         {
             var matcher = new Matcher();
-            var result = matcher.MatchJson(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
+            var result = matcher.MatchJson2(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
             Assert.False(result.Successful);
-            Assert.Equal("2.0 did not match 2 at path id.", result.ErrorMessage);
+            Assert.Equal("Actual value \"2\" (System.Double) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
         }
 
         [Fact]
@@ -416,7 +413,7 @@ namespace NMatcher.IntegrationTests
         {
             var matcher = new Matcher();
 
-            var result = matcher.MatchJson(
+            var result = matcher.MatchJson2(
                 @"
                  {
                     ""Foo"" : 1,
@@ -437,7 +434,7 @@ namespace NMatcher.IntegrationTests
         {
             var testJson = @"{""test"" : [1, 2 ,3]}";
             var matcher = new Matcher();
-            var result = matcher.MatchJson(testJson, testJson);
+            var result = matcher.MatchJson2(testJson, testJson);
             Assert.True(result.Successful);
         }
 
@@ -446,7 +443,7 @@ namespace NMatcher.IntegrationTests
         {
             var testJson = @"{""test"" : []}";
             var matcher = new Matcher();
-            var result = matcher.MatchJson(testJson, testJson);
+            var result = matcher.MatchJson2(testJson, testJson);
             Assert.True(result.Successful);
         }
     }
