@@ -168,7 +168,7 @@ namespace NMatcher.IntegrationTests
                             ""_arr"" : [1, 2, 3, 4],
                             ""_arr2"" : [""fuu"", ""bar""],
                             ""_date"" : ""2018-01-01"",
-                            ""_endDate"": ""2017-12-01T00:00:00"",
+                            ""_endDate"": ""2017-12-01T00:00:00""
                         }
                     }
                 }",

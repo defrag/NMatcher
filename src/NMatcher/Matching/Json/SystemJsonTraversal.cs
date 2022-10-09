@@ -3,7 +3,6 @@ using System;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using NMatcher.Extensions;
 
 namespace NMatcher.Matching.Json

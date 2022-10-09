@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using NMatcher.Matching.Json;
+﻿using NMatcher.Matching.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace NMatcher.Matching
 {
@@ -19,27 +17,6 @@ namespace NMatcher.Matching
             _expressionMatcher = expressionMatcher ?? throw new ArgumentNullException(nameof(expressionMatcher));
             _expectedJson = expectedJson ?? throw new ArgumentNullException(nameof(expectedJson));
         }
-
-        public Result MatchesJson(string actualJson)
-        {
-            var result = TraverseMatch2(actualJson);
-
-            var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths);
-            if (expectedDiff.Any())
-            {
-                return Result.Failure($"Expected value did not appear at path {expectedDiff.First()}.");
-            }
-
-            var actualDiff = result.ResolvedPaths.Except(result.ActualPaths);
-            if (actualDiff.Any())
-            {
-                return Result.Failure($"Actual value did not appear at path {actualDiff.First()}.");
-            }
-
-            return result.Pairs
-                .Select(MatchPair)
-                .FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
-        }
         
         private TraversalResult TraverseMatch2(string actualJson)
         {
@@ -49,8 +26,7 @@ namespace NMatcher.Matching
             var actualCollected = SystemJsonTraversal.CollectPaths(actual);
             var extectedCollected = SystemJsonTraversal.CollectPaths(expected);
 
-            var actualPaths = actualCollected.Elements.Select(s => s.Path);
-            
+            var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
             var resolvedPaths = new List<string>();
 
             var pairs = new List<JsonPair>();
@@ -60,18 +36,34 @@ namespace NMatcher.Matching
                 var actualNode = actualCollected.AtPath(element.Path);
 
                 var expectedValue = expectedNode!.ParseValue();
-                var actualValue = actualNode!.ParseValue();
+                var actualValue = actualNode?.ParseValue();
+
+                if (actualValue is null)
+                {
+                    pairs.Add(new JsonPair(null, expectedValue, element.Path, false));
+                }
+                
+                if (expectedValue.ToString().Contains("?"))
+                {
+                    actualPaths.Add(expectedNode.Path);
+                }
                 
                 resolvedPaths.Add(expectedNode.Path);
 
                 var comparisonResult = false;
                 if (actualValue is IEnumerable a && expectedValue is IEnumerable b)
                 {
-                    comparisonResult = a.SequenceEqual(b);
+                    
+
+                    comparisonResult = true;
+                }
+                else
+                {
+                    comparisonResult = expectedValue == actualValue;
                 }
                 
                 
-                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, expectedValue == actualValue));
+                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, comparisonResult));
             }
 
             
@@ -80,8 +72,8 @@ namespace NMatcher.Matching
         
         public Result Match(object value)
         {
-            var result = TraverseMatch(value.ToString(), _expectedJson);
-
+            var result = TraverseMatch2(value.ToString());
+            
             var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths);
             if (expectedDiff.Any())
             {
@@ -116,55 +108,7 @@ namespace NMatcher.Matching
 
             return pair.IsEqual ? Result.Success() : Result.Failure(FormatError(pair.Actual, pair.Expected, pair.Path));
         }
-
-        private TraversalResult TraverseMatch(string actual, string expected)
-        {
-            var actualJson = JsonTokenLoader.LoadJson(actual);
-            var expectedJson = JsonTokenLoader.LoadJson(expected);
-            var actualPaths = JsonTraversal.AccumulatePaths(actualJson).ToList();
-            var expectedPaths = JsonTraversal.AccumulatePaths(expectedJson).ToList();
-            var resolvedPaths = new List<string>();
-            var pairs = new List<JsonPair>();
-
-            JsonTraversal.TraverseAllPaths(expectedJson, token =>
-            {
-                var expectedNode = expectedJson.SelectToken(token.Path);
-                var currentNode = actualJson.SelectToken(token.Path);
-
-                object actualValue = null;
-                var accumulate = token;
-                
-                if (null != currentNode)
-                {
-                    actualValue = currentNode.Type == JTokenType.Array
-                       ? currentNode.Children()
-                           .Where(_ => _ is JValue)
-                           .Select(_ => (JValue)_)
-                           .Select(_ => _.Value)
-                           .ToArray()
-                       : ((JValue)currentNode)?.Value;
-                    
-                    if (currentNode.Type == JTokenType.Array)
-                    {
-                        accumulate = currentNode;
-                    }
-                }
-                
-                if (expectedNode.ToString().Contains("?"))
-                {
-                    actualPaths.Add(expectedNode.Path);
-                }
-                
-                var expectedValue = expectedNode is JValue value ? value?.Value : null;
-                var comparisonResult = currentNode != null && JToken.DeepEquals(currentNode, expectedNode);
-                pairs.Add(new JsonPair(actualValue, expectedValue, token.Path, comparisonResult));
-
-                resolvedPaths.AddRange(JsonTraversal.AccumulatePaths(accumulate));
-            });
-
-            return new TraversalResult(pairs.AsEnumerable(), actualPaths.AsEnumerable(), resolvedPaths.AsEnumerable());
-        }
-
+        
         private sealed class TraversalResult
         {
             public TraversalResult(IEnumerable<JsonPair> pairs, IEnumerable<string> actualPaths, IEnumerable<string> resolvedPaths)

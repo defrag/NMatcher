@@ -1,10 +1,5 @@
-﻿using NMatcher.Parsing;
-using NMatcher.Activation;
-using System.Text.RegularExpressions;
+﻿using NMatcher.Activation;
 using NMatcher.Matching;
-using System.Linq;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace NMatcher
 {
@@ -34,12 +29,7 @@ namespace NMatcher
         
         public Result MatchJson2(string actual, string expected)
         {
-            return new JsonMatcher(new ExpressionMatcher(_activator), expected).MatchesJson(actual);
-        }
-
-        public Result MatchXml(string actual, string expected)
-        {
-            return new XmlMatcher(new ExpressionMatcher(_activator), expected).Match(actual);
+            return new JsonMatcher(new ExpressionMatcher(_activator), expected).Match(actual);
         }
     }
 }
