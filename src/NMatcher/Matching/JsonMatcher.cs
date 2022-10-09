@@ -24,42 +24,42 @@ namespace NMatcher.Matching
             var expected = JsonDocument.Parse(_expectedJson);
 
             var actualCollected = SystemJsonTraversal.CollectPaths(actual);
-            var extectedCollected = SystemJsonTraversal.CollectPaths(expected);
+            var expectedCollected = SystemJsonTraversal.CollectPaths(expected);
 
             var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
             var resolvedPaths = new List<string>();
-
+            
             var pairs = new List<JsonPair>();
-            foreach (var element in extectedCollected.Elements)
+            foreach (var element in expectedCollected.Elements)
             {
-                var expectedNode = extectedCollected.AtPath(element.Path);
+                var expectedNode = expectedCollected.AtPath(element.Path);
                 var actualNode = actualCollected.AtPath(element.Path);
 
                 var expectedValue = expectedNode!.ParseValue();
                 var actualValue = actualNode?.ParseValue();
 
+                resolvedPaths.Add(expectedNode.Path);
+                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue.ToString() ?? string.Empty))
+                {
+                    var result = _expressionMatcher.MatchExpression(actualValue, expectedValue.ToString());
+                    pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful));
+                    continue;
+                }
                 if (actualValue is null)
                 {
                     pairs.Add(new JsonPair(null, expectedValue, element.Path, false));
+                    continue;
                 }
                 
-                if (expectedValue.ToString().Contains("?"))
-                {
-                    actualPaths.Add(expectedNode.Path);
-                }
                 
-                resolvedPaths.Add(expectedNode.Path);
-
                 var comparisonResult = false;
                 if (actualValue is IEnumerable a && expectedValue is IEnumerable b)
                 {
-                    
-
-                    comparisonResult = true;
+                    continue;
                 }
                 else
                 {
-                    comparisonResult = expectedValue == actualValue;
+                    comparisonResult = expectedValue.Equals(actualValue);
                 }
                 
                 
