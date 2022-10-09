@@ -48,7 +48,7 @@ namespace NMatcher.Matching
                 if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
                 {
                     var result = _expressionMatcher.MatchExpression(actualValue, expectedValue.ToString());
-                    pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful));
+                    pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful, JsonPair.ComparisonOrigin.Expression));
 
                     var missing = actualCollected.Elements.Select(s => s.Path).Where(p => p.StartsWith(element.Path)).ToList();
                     expectedResolvedPaths.AddRange(missing);
@@ -61,8 +61,7 @@ namespace NMatcher.Matching
                     continue;
                 }
                 
-                var comparisonResult = expectedValue.Equals(actualValue);
-                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, comparisonResult));
+                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, expectedValue.Equals(actualValue)));
             }
             
             return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
@@ -91,24 +90,16 @@ namespace NMatcher.Matching
                    .FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
         }
 
-        private string FormatError(object act, object exp, string path)
+        private string FormatError(JsonPair pair)
         {
-            var ac = act is null ? "null" : act.ToString();
-            var acType = act is null ? "null" : act.GetType().ToString();
-            var ec = exp is null ? "n/a" : exp.ToString();
-            var ecType = exp is null ? "n/a" : exp.GetType().ToString();
-            
-            return $"Actual value \"{ac}\" ({acType}) did not match \"{ec}\" ({ecType}) at path \"{path}\".";
+            return $"Actual value \"{pair.ActualAsString}\" ({pair.ActualType}) did not match \"{pair.ExpectedAsString}\" ({pair.ExpectedType}) at path \"{pair.Path}\".";
         }
 
         private Result MatchPair(JsonPair pair)
         {
-            if (pair.Expected != null && ExpressionMatcher.MatcherRegex.IsMatch(pair.Expected.ToString()))
-            {
-                return _expressionMatcher.MatchExpression(pair.Actual, pair.Expected.ToString());
-            }
-
-            return pair.IsEqual ? Result.Success() : Result.Failure(FormatError(pair.Actual, pair.Expected, pair.Path));
+            return pair.IsEqual 
+                ? Result.Success() 
+                : Result.Failure(FormatError(pair));
         }
         
         private sealed class TraversalResult
