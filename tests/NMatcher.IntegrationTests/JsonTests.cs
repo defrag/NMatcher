@@ -19,36 +19,6 @@ namespace NMatcher.IntegrationTests
         }
 
         [Fact]
-        public void it_checks()
-        {
-            var json = @"
-                {
-                    ""id"" : ""some-uid-here"",
-                    ""uid"": ""C56A4180-65AA-42EC-A945-5FD21DEC0538"", 
-                    ""subnode"" : {
-                        ""city"" : ""NY"",
-                        ""zipCode"" : ""80-000"",
-                        ""state"" : ""enabled"",
-                        ""meta"" : {
-                            ""name"" : ""fuuuuuu"",
-                            ""shipping"": 99.99,
-                            ""enabled"" : false,
-                            ""_link"" : ""http://example.com?page=2"",
-                            ""_something"" : null,
-                            ""_arr"" : [1, 2, 3, 4],
-                            ""_arr2"" : [""fuu"", ""bar""],
-                            ""_date"" : ""2018-01-01"",
-                            ""_endDate"": ""2017-12-01T00:00:00"",
-                            ""_es"": null
-                        }
-                    }
-                }";
-            var paths = SystemJsonTraversal.CollectPaths(JsonDocument.Parse(json));
-
-        }
-
-        
-        [Fact]
         public void it_matches_with_int()
         {
             JsonAssert.MatchesJson(@"{""id"" : 1000}", @"{""id"" : ""@int@""}");
@@ -445,6 +415,12 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchJson(testJson, testJson);
             Assert.True(result.Successful);
+        }
+        
+        [Fact]
+        public void it_prevents_expressions_with_typo_from_build_evaluated()
+        {
+            JsonAssert.NotMatchesJson(@"{""id"" : ""7cc7e59a-4dcf-4cdb-83ae-326bf81c78da""}", @"{""id"" : ""@guid@a""}");
         }
     }
 }

@@ -103,12 +103,9 @@ namespace NMatcher.Matching
 
         private Result MatchPair(JsonPair pair)
         {
-            if (pair.Expected != null && ExpressionMatcher.MatcherRegex.IsMatch(pair.Expected.ToString()))
-            {
-                return _expressionMatcher.MatchExpression(pair.Actual, pair.Expected.ToString());
-            }
-
-            return pair.IsEqual ? Result.Success() : Result.Failure(FormatError(pair.Actual, pair.Expected, pair.Path));
+            return pair.IsEqual 
+                ? Result.Success() 
+                : Result.Failure(FormatError(pair.Actual, pair.Expected, pair.Path));
         }
         
         private sealed class TraversalResult
