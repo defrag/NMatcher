@@ -254,7 +254,6 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchJson(@"{""id"" : 1}", @"{}");
             Assert.False(result.Successful);
-            //Assert.Equal("Expected value did not appear at path id.", result.ErrorMessage);
         }
 
         [Fact]
@@ -421,6 +420,66 @@ namespace NMatcher.IntegrationTests
         public void it_prevents_expressions_with_typo_from_build_evaluated()
         {
             JsonAssert.NotMatchesJson(@"{""id"" : ""7cc7e59a-4dcf-4cdb-83ae-326bf81c78da""}", @"{""id"" : ""@guid@a""}");
+        }
+        
+        [Fact]
+        public void it_matches_array_with_skip()
+        {
+            JsonAssert.MatchesJson(
+                @"[""foo"", ""bar"", ""baz""]",
+                @"[""foo"", ""@skip@""]"
+            );
+        }
+        
+        [Fact]
+        public void it_matches_array_object_with_skip()
+        {
+            JsonAssert.MatchesJson(
+                @"
+                {
+                     ""arr"" : [1, 2, 3, 4]
+                }",
+                @"
+                {
+                    ""arr"" : [1, 2, ""@skip@""]            
+                }"
+            );
+        }
+        
+        [Fact]
+        public void it_doesnt_match_with_skip_if_values_were_incorrect()
+        {
+            JsonAssert.NotMatchesJson(
+                @"
+                {
+                     ""arr"" : [1, 2, 3, 4]
+                }",
+                @"
+                {
+                    ""arr"" : [3, 2, ""@skip@""]            
+                }"
+            );
+        }
+        
+        [Fact]
+        public void it_matches_with_nested_skips()
+        {
+            JsonAssert.MatchesJson(
+                @"
+                {
+                     ""arr"" : [1, 2, 3, 4],
+                     ""foo"": {
+                        ""bar"" : [""milk"", ""flour"", ""sugar""]
+                     }
+                }",
+                @"
+                {
+                    ""arr"" : [1, 2, ""@skip@""],
+                    ""foo"": {
+                        ""bar"" : [""milk"", ""@skip@""]
+                     }
+                }"
+            );
         }
     }
 }

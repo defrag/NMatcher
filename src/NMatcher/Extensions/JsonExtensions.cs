@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿#nullable enable
+using System.Linq;
 using System.Text.Json;
 
 namespace NMatcher.Extensions
 {
     internal static class JsonExtensions
     {
-        public static object ParseValue(this JsonElement e)
+        public static object? ParseValue(this JsonElement e)
         {
             return e.ValueKind switch
             {
@@ -13,12 +14,13 @@ namespace NMatcher.Extensions
                 JsonValueKind.Number => e
                     .MaybeGetInt().Select(v => (object)v)
                     .Or(e.MaybeGetDouble().Select(v => (object) v))
-                    .GetOrFail(),
+                    .GetOrFail($"Unable to get the number value from {e.ValueKind}."),
                 JsonValueKind.False => false,
                 JsonValueKind.True => true,
                 JsonValueKind.Array => e.EnumerateArray().ToArray().Select(e2 => e2.ParseValue()).ToArray(),
                 JsonValueKind.Object => e.EnumerateObject().ToArray().Select(e2 => e2.Value.ParseValue()).ToArray(),
                 JsonValueKind.Null => null,
+                JsonValueKind.Undefined => null,
             };
         }
         

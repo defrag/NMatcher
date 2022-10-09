@@ -19,11 +19,11 @@ namespace NMatcher.Extensions
             where T2 : class
             => v is not null ? (T2?)fn(v.Value) : null;
         
-        public static T1 GetOrFail<T1>(this T1? a)
+        public static T1 GetOrFail<T1>(this T1? a, string message)
         {
             if (a is null)
             {
-                throw new ArgumentException("Bad");
+                throw new ArgumentException(message);
             }
 
             return a;

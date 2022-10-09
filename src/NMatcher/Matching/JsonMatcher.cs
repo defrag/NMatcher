@@ -11,65 +11,15 @@ namespace NMatcher.Matching
     {
         private readonly ExpressionMatcher _expressionMatcher;
         private readonly string _expectedJson;
-
+        private static readonly string SkipPattern =  "@skip@";
         public JsonMatcher(ExpressionMatcher expressionMatcher, string expectedJson)
         {
             _expressionMatcher = expressionMatcher ?? throw new ArgumentNullException(nameof(expressionMatcher));
             _expectedJson = expectedJson ?? throw new ArgumentNullException(nameof(expectedJson));
         }
-        
-        private TraversalResult TraverseMatch2(string actualJson)
-        {
-            var actual = JsonDocument.Parse(actualJson);
-            var expected = JsonDocument.Parse(_expectedJson);
-
-            var actualCollected = SystemJsonTraversal.CollectPaths(actual);
-            var expectedCollected = SystemJsonTraversal.CollectPaths(expected);
-
-            var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
-            var expectedResolvedPaths = new List<string>();
-            
-            var pairs = new List<JsonPair>();
-            foreach (var element in expectedCollected.Elements)
-            {
-                var expectedNode = expectedCollected.AtPath(element.Path);
-                var actualNode = actualCollected.AtPath(element.Path);
-                
-                var expectedValue = expectedNode!.ParseValue();
-                var actualValue = actualNode?.ParseValue();
-
-                expectedResolvedPaths.Add(expectedNode.Path);
-                
-                if (expectedNode.Element.ValueKind == JsonValueKind.Array && actualNode?.Element.ValueKind == JsonValueKind.Array)
-                {
-                    continue;
-                }
-                
-                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
-                {
-                    var result = _expressionMatcher.MatchExpression(actualValue, expectedValue.ToString());
-                    pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful, JsonPair.ComparisonOrigin.Expression));
-
-                    var missing = actualCollected.Elements.Select(s => s.Path).Where(p => p.StartsWith(element.Path)).ToList();
-                    expectedResolvedPaths.AddRange(missing);
-                    actualPaths.Add(element.Path);
-                    continue;
-                }
-                if (actualValue is null)
-                {
-                    pairs.Add(new JsonPair(null, expectedValue, element.Path, actualValue == expectedValue));
-                    continue;
-                }
-                
-                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, expectedValue.Equals(actualValue)));
-            }
-            
-            return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
-        }
-        
         public Result Match(object value)
         {
-            var result = TraverseMatch2(value.ToString());
+            var result = TraverseMatch(value.ToString());
             
             var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths).ToList();
             if (expectedDiff.Any())
@@ -86,10 +36,70 @@ namespace NMatcher.Matching
             }
 
             return result.Pairs
-                   .Select(MatchPair)
-                   .FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
+                .Select(MatchPair)
+                .FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
         }
+        
+        private TraversalResult TraverseMatch(string actualJson)
+        {
+            var actual = JsonDocument.Parse(actualJson);
+            var expected = JsonDocument.Parse(_expectedJson);
 
+            var actualCollected = SystemJsonTraversal.CollectPaths(actual);
+            var expectedCollected = SystemJsonTraversal.CollectPaths(expected);
+
+            var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
+            var expectedResolvedPaths = new List<string>();
+            
+            var pairs = new List<JsonPair>();
+            foreach (var element in expectedCollected.Elements)
+            {
+                var expectedNode = expectedCollected.AtPath(element.Path);
+                var actualNode = actualCollected.AtPath(element.Path);
+                
+                var expectedValue = expectedNode?.ParseValue();
+                var actualValue = actualNode?.ParseValue();
+
+                expectedResolvedPaths.Add(expectedNode!.Path);
+                
+                if (expectedNode.Element.ValueKind == JsonValueKind.Array && actualNode?.Element.ValueKind == JsonValueKind.Array)
+                {
+                    continue;
+                }
+
+                var expectedStr = (expectedValue?.ToString() ?? string.Empty);
+                
+                if (expectedStr == SkipPattern)
+                {
+                    var missing = actualCollected.PathsWithSameParent(element);
+                    expectedResolvedPaths.AddRange(missing);
+                    actualPaths.Add(element.Path);
+                    continue;
+                }
+                
+                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
+                {
+                    var result = _expressionMatcher.MatchExpression(actualValue, expectedValue?.ToString() ?? string.Empty);
+                    pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful, JsonPair.ComparisonOrigin.Expression));
+
+                    var missing = actualCollected.DescendantPathsOf(element);
+                    expectedResolvedPaths.AddRange(missing);
+                    actualPaths.Add(element.Path);
+                    continue;
+                }
+                
+                if (actualValue is null)
+                {
+                    pairs.Add(new JsonPair(null, expectedValue, element.Path, expectedValue == actualValue));
+                    continue;
+                }
+                
+                pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, expectedValue is not null && expectedValue.Equals(actualValue)));
+            }
+            
+            return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
+        }
+        
         private string FormatError(JsonPair pair)
         {
             return $"Actual value \"{pair.ActualAsString}\" ({pair.ActualType}) did not match \"{pair.ExpectedAsString}\" ({pair.ExpectedType}) at path \"{pair.Path}\".";
