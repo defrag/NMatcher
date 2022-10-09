@@ -315,7 +315,7 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("Actual value did not appear at path subnode.radius.", result.ErrorMessage);
+            Assert.Equal("Missing path in actual JSON detected! Expected path \".subnode.radius\" did not appear in actual JSON.", result.ErrorMessage);
         }
 
         [Fact]
@@ -346,11 +346,11 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("Expected value did not appear at path subnode.notInExpected.", result.ErrorMessage);
+            Assert.Equal("Extra path in actual JSON detected! Expected path did not include path \".subnode.notInExpected\", which appeared in actual JSON.", result.ErrorMessage);
         }
 
         [Fact]
-        public void it_doesnt_matches_when_nested_values_just_dont_match()
+        public void it_doesnt_match_when_nested_values_just_dont_match()
         {
             var matcher = new Matcher();
 
@@ -426,7 +426,7 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("Expected value did not appear at path SomeArray.", result.ErrorMessage);
+            Assert.Equal("Extra path in actual JSON detected! Expected path did not include path \".SomeArray\", which appeared in actual JSON.", result.ErrorMessage);
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace NMatcher.Matching
             var expectedCollected = SystemJsonTraversal.CollectPaths(expected);
 
             var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
-            var resolvedPaths = new List<string>();
+            var expectedResolvedPaths = new List<string>();
             
             var pairs = new List<JsonPair>();
             foreach (var element in expectedCollected.Elements)
@@ -38,16 +38,18 @@ namespace NMatcher.Matching
                 var expectedValue = expectedNode!.ParseValue();
                 var actualValue = actualNode?.ParseValue();
 
-                resolvedPaths.Add(expectedNode.Path);
-                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue.ToString() ?? string.Empty))
+                expectedResolvedPaths.Add(expectedNode.Path);
+                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
                 {
                     var result = _expressionMatcher.MatchExpression(actualValue, expectedValue.ToString());
                     pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful));
+                    
+                    actualPaths.Add(element.Path);
                     continue;
                 }
                 if (actualValue is null)
                 {
-                    pairs.Add(new JsonPair(null, expectedValue, element.Path, false));
+                    pairs.Add(new JsonPair(null, expectedValue, element.Path, actualValue == expectedValue));
                     continue;
                 }
                 
@@ -57,33 +59,31 @@ namespace NMatcher.Matching
                 {
                     continue;
                 }
-                else
-                {
-                    comparisonResult = expectedValue.Equals(actualValue);
-                }
                 
-                
+                comparisonResult = expectedValue.Equals(actualValue);
                 pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, comparisonResult));
             }
 
             
-            return new TraversalResult(pairs, resolvedPaths, actualPaths);
+            return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
         }
         
         public Result Match(object value)
         {
             var result = TraverseMatch2(value.ToString());
             
-            var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths);
+            var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths).ToList();
             if (expectedDiff.Any())
             {
-                return Result.Failure($"Expected value did not appear at path {expectedDiff.First()}.");
+                var first = expectedDiff.First();
+                return Result.Failure($"Missing path in actual JSON detected! Expected path \"{first}\" did not appear in actual JSON.");
             }
 
-            var actualDiff = result.ResolvedPaths.Except(result.ActualPaths);
+            var actualDiff = result.ResolvedPaths.Except(result.ActualPaths).ToList();
             if (actualDiff.Any())
             {
-                return Result.Failure($"Actual value did not appear at path {actualDiff.First()}.");
+                var first = actualDiff.First();
+                return Result.Failure($"Extra path in actual JSON detected! Expected path did not include path \"{first}\", which appeared in actual JSON.");
             }
 
             return result.Pairs
@@ -93,10 +93,12 @@ namespace NMatcher.Matching
 
         private string FormatError(object act, object exp, string path)
         {
-            var ac = act == null ? "null" : act.ToString();
-            var ec = exp == null ? "null" : exp.ToString();
-
-            return $"Actual value \"{ac}\" ({act.GetType()}) did not match \"{ec}\" ({exp.GetType()}) at path \"{path}\".";
+            var ac = act is null ? "null" : act.ToString();
+            var acType = act is null ? "null" : act.GetType().ToString();
+            var ec = exp is null ? "n/a" : exp.ToString();
+            var ecType = exp is null ? "n/a" : exp.GetType().ToString();
+            
+            return $"Actual value \"{ac}\" ({acType}) did not match \"{ec}\" ({ecType}) at path \"{path}\".";
         }
 
         private Result MatchPair(JsonPair pair)
