@@ -481,5 +481,24 @@ namespace NMatcher.IntegrationTests
                 }"
             );
         }
+        
+        [Fact]
+        public void it_matches_with_skip_and_array_of_objs()
+        {
+            JsonAssert.MatchesJson(
+                @"
+                    [
+                        {""name"": ""Michal""}, 
+                        {""name"": ""Johny""}
+                    ]
+                ",
+                @"
+                    [
+                        {""name"": ""Michal""}, 
+                        ""@skip@""
+                    ]      
+                "
+            );
+        }
     }
 }
