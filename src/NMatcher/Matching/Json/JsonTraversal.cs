@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using NMatcher.Extensions;
 
 namespace NMatcher.Matching.Json
 {
-    public record ElementWithPath(JsonElement Element, string Path, string? ParentPath = null)
+    internal sealed record ElementWithPath(JsonElement Element, string Path, string? ParentPath = null)
     {
         public object? ParseValue()
         {
@@ -15,7 +14,7 @@ namespace NMatcher.Matching.Json
         }
     }
 
-    public sealed class CollectedElements
+    internal sealed class CollectedElements
     {
         public IReadOnlyCollection<ElementWithPath> Elements { get; }
         private readonly IReadOnlyDictionary<string, ElementWithPath> _dict;
@@ -33,10 +32,17 @@ namespace NMatcher.Matching.Json
             => Elements.Where(p => p.ParentPath == e.ParentPath).Select(p => p.Path).ToList();
 
         public IReadOnlyCollection<string> DescendantPathsOf(ElementWithPath e)
-            => Elements.Select(s => s.Path).Where(p => p.StartsWith(e.Path)).ToList();
+        {
+            var elements = Elements.Where(p => p.ParentPath == e.Path).ToList();
+            var inside  = elements.SelectMany(p => DescendantPathsOf(p)).ToList();
+
+            return elements.Select(p => p.Path).Concat(inside).ToList();
+        }
+        public IReadOnlyCollection<string> AllPaths 
+            => _dict.Select(s => s.Key).ToList();
     }
     
-    public static class SystemJsonTraversal
+    internal static class JsonTraversal
     {
         public static CollectedElements CollectPaths(JsonDocument doc)
         {

@@ -1,6 +1,5 @@
 ﻿using NMatcher.Matching.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -36,19 +35,18 @@ namespace NMatcher.Matching
             }
 
             return result.Pairs
-                .Select(MatchPair)
+                .Select(ReformatPair)
                 .FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
         }
         
         private TraversalResult TraverseMatch(string actualJson)
         {
-            var actual = JsonDocument.Parse(actualJson);
-            var expected = JsonDocument.Parse(_expectedJson);
+            using var actualJ = JsonDocument.Parse(actualJson);
+            using var expectedJ = JsonDocument.Parse(_expectedJson);
+            var actualCollected = JsonTraversal.CollectPaths(actualJ);
+            var expectedCollected = JsonTraversal.CollectPaths(expectedJ);
 
-            var actualCollected = SystemJsonTraversal.CollectPaths(actual);
-            var expectedCollected = SystemJsonTraversal.CollectPaths(expected);
-
-            var actualPaths = actualCollected.Elements.Select(s => s.Path).ToList();
+            var actualAcc = actualCollected.AllPaths.ToList();
             var expectedResolvedPaths = new List<string>();
             
             var pairs = new List<JsonPair>();
@@ -71,20 +69,27 @@ namespace NMatcher.Matching
                 
                 if (expectedStr == SkipPattern)
                 {
-                    var missing = actualCollected.PathsWithSameParent(element);
-                    expectedResolvedPaths.AddRange(missing);
-                    actualPaths.Add(element.Path);
+                    expectedResolvedPaths.AddRange(
+                        actualCollected.PathsWithSameParent(element)
+                    );
+                    
+                    expectedResolvedPaths.AddRange(
+                        actualCollected.DescendantPathsOf(element)
+                    );
+                    
+                    actualAcc.Add(element.Path);
                     continue;
                 }
                 
-                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedValue?.ToString() ?? string.Empty))
+                if (ExpressionMatcher.MatcherRegex.IsMatch(expectedStr))
                 {
-                    var result = _expressionMatcher.MatchExpression(actualValue, expectedValue?.ToString() ?? string.Empty);
+                    var result = _expressionMatcher.MatchExpression(actualValue, expectedStr);
                     pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, result.Successful, JsonPair.ComparisonOrigin.Expression));
-
-                    var missing = actualCollected.DescendantPathsOf(element);
-                    expectedResolvedPaths.AddRange(missing);
-                    actualPaths.Add(element.Path);
+                    
+                    expectedResolvedPaths.AddRange(
+                        actualCollected.DescendantPathsOf(element)
+                    );
+                    actualAcc.Add(element.Path);
                     continue;
                 }
                 
@@ -97,7 +102,7 @@ namespace NMatcher.Matching
                 pairs.Add(new JsonPair(actualValue, expectedValue, element.Path, expectedValue is not null && expectedValue.Equals(actualValue)));
             }
             
-            return new TraversalResult(pairs, expectedResolvedPaths, actualPaths);
+            return new TraversalResult(pairs, expectedResolvedPaths, actualAcc);
         }
         
         private string FormatError(JsonPair pair)
@@ -105,7 +110,7 @@ namespace NMatcher.Matching
             return $"Actual value \"{pair.ActualAsString}\" ({pair.ActualType}) did not match \"{pair.ExpectedAsString}\" ({pair.ExpectedType}) at path \"{pair.Path}\".";
         }
 
-        private Result MatchPair(JsonPair pair)
+        private Result ReformatPair(JsonPair pair)
         {
             return pair.IsEqual 
                 ? Result.Success() 
