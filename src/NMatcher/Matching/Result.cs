@@ -22,6 +22,15 @@ namespace NMatcher.Matching
 
         public static Result Failure(string errorMessage) => new Result(errorMessage);
 
+        public Result IfSuccess(Func<Result> next)
+        {
+            if (Successful)
+                return next();
+
+            return this;
+        }
+        
         public static implicit operator bool(Result r) => r.Successful;
+        public static implicit operator Result(bool r) => r ? Success() : Failure("Result was a failure");
     }
 }

@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Linq;
 using System.Text.Json;
 
@@ -21,6 +22,7 @@ namespace NMatcher.Extensions
                 JsonValueKind.Object => e.EnumerateObject().ToArray().Select(e2 => e2.Value.ParseValue()).ToArray(),
                 JsonValueKind.Null => null,
                 JsonValueKind.Undefined => null,
+                _ => throw new ArgumentOutOfRangeException($"Parsing value of kind {e.ValueKind} is not supported.")
             };
         }
         

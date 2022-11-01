@@ -1,10 +1,9 @@
 ﻿#nullable enable
 using System;
-using NMatcher.Parsing.AST;
 
 namespace NMatcher.Extensions
 {
-    public static class NullableExtensions
+    internal static class NullableExtensions
     {
         public static T1? Or<T1>(this T1? a, T1? b)
             where T1 : class

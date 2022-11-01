@@ -95,8 +95,5 @@ namespace NMatcher.Parsing
 
         internal static IEnumerable<AST.INode> ParseExpressions(string input) =>
             Expressions.Parse(input);
-
-        public static AST.Type ParseExpression(string input) =>
-            Expression.Parse(input);
     }
 }
