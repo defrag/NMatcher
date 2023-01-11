@@ -36,7 +36,8 @@ public void it_matches_nested_json()
                     ""_arr2"" : [10, 20, 30],
                     ""_date"" : ""2018-01-01""
                 }
-            }
+            },
+            ""subnodeArr"": [1, 2, 3, 4, 5, 6] 
         }",
         @"
         {
@@ -57,7 +58,8 @@ public void it_matches_nested_json()
                     ""_date"" : ""@string@.IsDateTime()"",
                     ""_signature"" : ""@string?@.Contains('sha')""
                 }
-            }
+            },
+            ""subnodeArr"": [1, 2, 3, ""@skip@""]
         }"
     );
 

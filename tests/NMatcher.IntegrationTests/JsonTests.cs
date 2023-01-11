@@ -140,7 +140,8 @@ namespace NMatcher.IntegrationTests
                             ""_date"" : ""2018-01-01"",
                             ""_endDate"": ""2017-12-01T00:00:00""
                         }
-                    }
+                    },
+                    ""subnodeArr"": [1, 2, 3, 4,5,6] 
                 }",
                 @"
                 {
@@ -162,7 +163,8 @@ namespace NMatcher.IntegrationTests
                             ""_endDate"": ""@string@.IsDateTime()"",
                             ""_mayNotBeHere"": ""@string?@.Contains('imagine')""
                         }
-                    }
+                    },
+                    ""subnodeArr"": [1, 2, 3, ""@skip@""]
                 }"
             );
         }
