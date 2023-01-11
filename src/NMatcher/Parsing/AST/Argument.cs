@@ -2,7 +2,7 @@
 
 namespace NMatcher.Parsing.AST
 {
-    public sealed class Argument
+    internal sealed class Argument
     {
         public Argument(object value)
         {

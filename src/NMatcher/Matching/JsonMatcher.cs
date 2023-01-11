@@ -16,9 +16,9 @@ namespace NMatcher.Matching
             _expressionMatcher = expressionMatcher ?? throw new ArgumentNullException(nameof(expressionMatcher));
             _expectedJson = expectedJson ?? throw new ArgumentNullException(nameof(expectedJson));
         }
-        public Result Match(object value)
+        public Result Match(DynamicValue value)
         {
-            var result = TraverseMatch(value.ToString());
+            var result = TraverseMatch(value.Value.ToString());
             
             var expectedDiff = result.ActualPaths.Except(result.ResolvedPaths).ToList();
             if (expectedDiff.Any())

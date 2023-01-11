@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace NMatcher.Parsing.AST
 {
-    public sealed class Type : INode
+    internal sealed class Type : INode
     {
-        public Type(string name, IEnumerable<Expander> expanders, bool isOptional = false)
+        public Type(string name, IReadOnlyCollection<Expander> expanders, bool isOptional = false)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Expanders = expanders;
@@ -13,7 +13,7 @@ namespace NMatcher.Parsing.AST
         }
 
         public string Name { get; }
-        public IEnumerable<Expander> Expanders { get; }
+        public IReadOnlyCollection<Expander> Expanders { get; }
         public bool IsOptional { get; }
     }
 }

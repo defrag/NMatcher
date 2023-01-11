@@ -59,7 +59,7 @@ namespace NMatcher.Parsing
         internal static Parser<AST.Type> Expression =>
             from type in Type
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).Many()
-            select new AST.Type(type.Item1, expanders, type.Item2);
+            select new AST.Type(type.Item1, expanders.ToList(), type.Item2);
 
         internal static Parser<IEnumerable<AST.INode>> Expressions =>
             from expr in Expression.Or<AST.INode>(ExpressionSpace).Many()
@@ -95,8 +95,5 @@ namespace NMatcher.Parsing
 
         internal static IEnumerable<AST.INode> ParseExpressions(string input) =>
             Expressions.Parse(input);
-
-        public static AST.Type ParseExpression(string input) =>
-            Expression.Parse(input);
     }
 }

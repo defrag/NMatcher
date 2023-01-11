@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Linq;
 using System.Text.Json;
 
@@ -10,7 +11,7 @@ namespace NMatcher.Extensions
         {
             return e.ValueKind switch
             {
-                JsonValueKind.String => e.GetString()!,
+                JsonValueKind.String => e.MaybeGetGuid().Select(v => (object)v).Or(e.GetString()!),
                 JsonValueKind.Number => e
                     .MaybeGetInt().Select(v => (object)v)
                     .Or(e.MaybeGetDouble().Select(v => (object) v))
@@ -21,12 +22,23 @@ namespace NMatcher.Extensions
                 JsonValueKind.Object => e.EnumerateObject().ToArray().Select(e2 => e2.Value.ParseValue()).ToArray(),
                 JsonValueKind.Null => null,
                 JsonValueKind.Undefined => null,
+                _ => throw new ArgumentOutOfRangeException($"Parsing value of kind {e.ValueKind} is not supported.")
             };
         }
         
         public static int? MaybeGetInt(this JsonElement e)
         {
             if (e.TryGetInt32(out var v))
+            {
+                return v;
+            }
+
+            return null;
+        }
+        
+        public static Guid? MaybeGetGuid(this JsonElement e)
+        {
+            if (e.TryGetGuid(out var v))
             {
                 return v;
             }

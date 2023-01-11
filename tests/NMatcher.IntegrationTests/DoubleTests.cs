@@ -46,7 +46,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression("fuuu", "@double@");
             Assert.False(result.Successful);
-            Assert.Equal("fuuu is not a valid double.", result.ErrorMessage);
+            Assert.Equal("Value fuuu of Kind String is not a valid double.", result.ErrorMessage);
         }
     }
 }

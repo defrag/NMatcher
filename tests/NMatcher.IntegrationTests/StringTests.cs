@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace NMatcher.IntegrationTests
@@ -21,13 +22,20 @@ namespace NMatcher.IntegrationTests
             Assert.True(matcher.MatchExpression(null, "@string?@").Successful);
         }
 
-        [Fact]
-        public void it_matches_string_with_contains()
+        [Theory]
+        [InlineData("string", "@string@.Contains(\"str\")")]
+        [InlineData("string", "@string@.Contains('str')")]
+        public void it_matches_string_with_contains_successfully(string value, string expr)
         {
             var matcher = new Matcher();
-
-            Assert.True(matcher.MatchExpression("string", "@string@.Contains(\"str\")"));
-            Assert.True(matcher.MatchExpression("string", "@string@.Contains('str')"));
+            var rs = matcher.MatchExpression(value, expr);
+            Assert.True(rs.Successful, rs.ErrorMessage);
+        }
+        
+        [Fact]
+        public void it_returns_false_when_string_does_not_contained_seeked_value()
+        {
+            var matcher = new Matcher();
             Assert.False(matcher.MatchExpression("barbaz", "@string@.Contains(\"str\")"));
         }
 
@@ -54,7 +62,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression(100, "@string@.Contains(\"str\")");
             Assert.False(result.Successful);
-            Assert.Equal("100 is not a valid string.", result.ErrorMessage);
+            Assert.Equal("Value 100 of Kind Int is not a valid string.", result.ErrorMessage);
         }
 
 
