@@ -41,8 +41,13 @@ namespace NMatcher.Matching
         
         private TraversalResult TraverseMatch(string actualJson)
         {
-            using var actualJ = JsonDocument.Parse(actualJson);
-            using var expectedJ = JsonDocument.Parse(_expectedJson);
+            var options = new JsonDocumentOptions()
+            {
+                AllowTrailingCommas = true
+            };
+            
+            using var actualJ = JsonDocument.Parse(actualJson, options);
+            using var expectedJ = JsonDocument.Parse(_expectedJson, options);
             var actualCollected = JsonTraversal.CollectPaths(actualJ);
             var expectedCollected = JsonTraversal.CollectPaths(expectedJ);
 
