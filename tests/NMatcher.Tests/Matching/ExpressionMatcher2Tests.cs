@@ -1,9 +1,8 @@
-﻿using NMatcher.Matching;
-using Xunit;
+﻿using Xunit;
 
-namespace NMatcher.Matching2
+namespace NMatcher.Matching
 {
-    public class ExpressionMatcher2Tests
+    public class ExpressionMatcherTests
     {
         [Fact]
         public void it_matches_simple_string_expression()

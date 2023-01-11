@@ -19,7 +19,7 @@ namespace NMatcher.Matching
                     .OfType<Parsing.AST.Type>()
                     .Select(Activator.CreateMatcher)
                     .First()
-                    .Match(DynamicValue.UnsafelyTryCreateFrom(value));
+                    .Match(DynamicValue.Create(value));
             }
             
             var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
@@ -40,7 +40,7 @@ namespace NMatcher.Matching
             var parts = expressions
                 .OfType<Parsing.AST.Type>()
                 .Select(Activator.CreateMatcher)
-                .Zip(results, (m, v) => m.Match(DynamicValue.UnsafelyTryCreateFrom(v)));
+                .Zip(results, (m, v) => m.Match(DynamicValue.Create(v)));
 
             return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
         }

@@ -1,9 +1,8 @@
-﻿using NMatcher.Matching;
-using Xunit;
+﻿using Xunit;
 
-namespace NMatcher.Matching2
+namespace NMatcher.Matching
 {
-    public class Matcher2Tests
+    public class MatcherTests
     {
         [Fact]
         public void test_matching_ints()

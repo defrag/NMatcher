@@ -49,7 +49,7 @@ namespace NMatcher.Matching
 
     public record DynamicValue(object Value, DynamicValueKind Kind)
     {
-        public static DynamicValue UnsafelyTryCreateFrom(object value)
+        public static DynamicValue Create(object value)
         {
             var kind = DynamicValueKindExtractor.UnsafelyExtractKind(value);
 
