@@ -2,7 +2,7 @@
 
 namespace NMatcher.Parsing.AST
 {
-    public sealed class Literal : INode
+    internal sealed class Literal : INode
     {
         public Literal(string value, LiteralType type)
         {

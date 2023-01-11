@@ -12,7 +12,7 @@ namespace NMatcher.Matching
 
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
 
-        public ExpressionMatcher(IActivator activator)
+        private ExpressionMatcher(IActivator activator)
         {
             _activator = activator ?? throw new ArgumentNullException(nameof(activator));
         }

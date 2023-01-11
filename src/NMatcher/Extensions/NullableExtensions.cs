@@ -27,5 +27,15 @@ namespace NMatcher.Extensions
 
             return a;
         }
+        
+        public static T1 GetOrFail<T1>(this T1? a, string message) where T1 : struct
+        {
+            if (!a.HasValue)
+            {
+                throw new ArgumentException(message);
+            }
+
+            return a.Value;
+        }
     }    
 }

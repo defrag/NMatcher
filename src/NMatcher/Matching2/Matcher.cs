@@ -1,15 +1,65 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using NMatcher.Extensions;
 using NMatcher.Matching;
 
 namespace NMatcher.Matching2
 {
-    public enum DynamicValueKind { Bool, Int, Double, String, Null }
+    public enum DynamicValueKind { Bool, Int, Double, String, Null, Guid }
+
+    internal static class DynamicValueKindExtractor
+    {
+        public static DynamicValueKind UnsafelyExtractKind(object value)
+        {
+            var rs = TryNull(value)
+                .Or(TryBool(value))
+                .Or(TryInt(value))
+                .Or(TryDouble(value))
+                .Or(TryString(value));
+            
+            return rs.GetOrFail($"Unable to extract kind for unsupported type {value?.GetType().Name}.");
+        }
+
+        private static DynamicValueKind? TryBool(object value) =>
+            value is bool ? DynamicValueKind.Bool : null;
+
+        private static DynamicValueKind? TryString(object value) =>
+            value is string ? DynamicValueKind.String : null;
+
+        private static DynamicValueKind? TryInt(object value)
+        {
+            var res = value is short || 
+                      value is ushort ||
+                      value is int ||
+                      value is uint ||
+                      value is long ||
+                      value is ulong;
+            return res ? DynamicValueKind.Int : null;
+        }
+        
+        private static DynamicValueKind? TryDouble(object value)
+        {
+            var res = value is float ||
+                       value is double ||
+                       value is decimal;
+            return res ? DynamicValueKind.Double : null;
+        }
+        
+        private static DynamicValueKind? TryNull(object value) =>
+            value is null ? DynamicValueKind.Null : null;
+    }
 
     public record DynamicValue(object Value, DynamicValueKind Kind)
     {
         public T UnsafelyParseValue<T>() => (T)Value;
+
+        public static DynamicValue UnsafelyTryCreateFrom(object value)
+        {
+            var kind = DynamicValueKindExtractor.UnsafelyExtractKind(value);
+
+            return new DynamicValue(value, kind);
+        }
     }
     
     public interface IMatcher
@@ -31,10 +81,10 @@ namespace NMatcher.Matching2
 
         public Result Match(DynamicValue value)
         {
-            _expanders[0].Invoke(1).IfSuccess(() => _expanders[1].Invoke(1));
             if (value.Kind == DynamicValueKind.Int)
             {
-                var expanders = _expanders.All(_ => _.Invoke((int)value.Value));
+                var v = (int)value.Value;
+                var expanders = _expanders.All(_ => _.Invoke(v));
                 return expanders ? Result.Success() : Result.Failure("f");
             };
 
@@ -148,5 +198,13 @@ namespace NMatcher.Matching2
             return false;
         }
     }
+    
+    public class Guid : IMatcher
+    {
+        public Result Match(DynamicValue value)
+        {
+            return value.Kind == DynamicValueKind.Guid;
+        }
+    }   
 }
 

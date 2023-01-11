@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace NMatcher.Activation
 {
-    public sealed class DefaultActivator : IActivator
+    internal sealed class DefaultActivator : IActivator
     {
         private IDictionary<string, Definition> _map = new Dictionary<string, Definition>()
         {

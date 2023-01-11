@@ -2,7 +2,7 @@
 
 namespace NMatcher.Activation
 {
-    public interface IActivator
+    internal interface IActivator
     {
         IMatcher CreateMatcherInstance(Parsing.AST.Type type);
     }
