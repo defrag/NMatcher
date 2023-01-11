@@ -15,6 +15,7 @@ namespace NMatcher.Matching2
                 "null" => new Null(),
                 "bool" => new Bool(),
                 "guid" => new Guid(),
+                "array" => new Array(),
                 _ => throw new ArgumentOutOfRangeException($"Type {type.Name} is not supported for matching. ")
             };
 

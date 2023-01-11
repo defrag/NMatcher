@@ -6,7 +6,7 @@ using NMatcher.Matching;
 
 namespace NMatcher.Matching2
 {
-    public enum DynamicValueKind { Bool, Int, Double, String, Null, Guid }
+    public enum DynamicValueKind { Bool, Int, Double, String, Null, Guid, Array }
 
     internal static class DynamicValueKindExtractor
     {
@@ -16,7 +16,9 @@ namespace NMatcher.Matching2
                 .Or(TryBool(value))
                 .Or(TryInt(value))
                 .Or(TryDouble(value))
-                .Or(TryString(value));
+                .Or(TryGuid(value))
+                .Or(TryString(value))
+                .Or(TryArray(value));
             
             return rs.GetOrFail($"Unable to extract kind for unsupported type {value?.GetType().Name}.");
         }
@@ -48,6 +50,12 @@ namespace NMatcher.Matching2
         
         private static DynamicValueKind? TryNull(object value) =>
             value is null ? DynamicValueKind.Null : null;
+
+        private static DynamicValueKind? TryArray(object value) =>
+            value.GetType().IsArray ? DynamicValueKind.Array : null;
+
+        private static DynamicValueKind? TryGuid(object value) =>
+            System.Guid.TryParse(value.ToString(), out _) ? DynamicValueKind.Guid : null;
     }
 
     public record DynamicValue(object Value, DynamicValueKind Kind)
@@ -88,7 +96,7 @@ namespace NMatcher.Matching2
                 return expanders ? Result.Success() : Result.Failure("f");
             };
 
-            return Result.Success();
+            return Result.Failure("oops");
         }
     }   
     
@@ -204,6 +212,14 @@ namespace NMatcher.Matching2
         public Result Match(DynamicValue value)
         {
             return value.Kind == DynamicValueKind.Guid;
+        }
+    }   
+    
+    public class Array : IMatcher
+    {
+        public Result Match(DynamicValue value)
+        {
+            return value.Kind == DynamicValueKind.Array;
         }
     }   
 }

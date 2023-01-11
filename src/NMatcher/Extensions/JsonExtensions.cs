@@ -11,7 +11,7 @@ namespace NMatcher.Extensions
         {
             return e.ValueKind switch
             {
-                JsonValueKind.String => e.GetString()!,
+                JsonValueKind.String => e.MaybeGetGuid().Select(v => (object)v).Or(e.GetString()!),
                 JsonValueKind.Number => e
                     .MaybeGetInt().Select(v => (object)v)
                     .Or(e.MaybeGetDouble().Select(v => (object) v))
@@ -29,6 +29,16 @@ namespace NMatcher.Extensions
         public static int? MaybeGetInt(this JsonElement e)
         {
             if (e.TryGetInt32(out var v))
+            {
+                return v;
+            }
+
+            return null;
+        }
+        
+        public static Guid? MaybeGetGuid(this JsonElement e)
+        {
+            if (e.TryGetGuid(out var v))
             {
                 return v;
             }
