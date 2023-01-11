@@ -1,9 +1,9 @@
 ﻿using System;
-using NMatcher.Matching2;
-using Array = NMatcher.Matching2.Array;
-using Double = NMatcher.Matching2.Double;
-using Guid = NMatcher.Matching2.Guid;
-using String = NMatcher.Matching2.String;
+using NMatcher.Matching;
+using Array = NMatcher.Matching.Array;
+using Double = NMatcher.Matching.Double;
+using Guid = NMatcher.Matching.Guid;
+using String = NMatcher.Matching.String;
 
 namespace NMatcher.Activation
 {

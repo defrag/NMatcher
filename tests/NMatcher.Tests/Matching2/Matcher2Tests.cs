@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using NMatcher.Matching;
+using Xunit;
 
 namespace NMatcher.Matching2
 {

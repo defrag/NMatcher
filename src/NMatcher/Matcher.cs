@@ -1,5 +1,4 @@
 ﻿using NMatcher.Matching;
-using NMatcher.Matching2;
 
 namespace NMatcher
 {

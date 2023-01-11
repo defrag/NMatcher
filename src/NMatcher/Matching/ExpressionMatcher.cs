@@ -1,14 +1,12 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using NMatcher.Matching2;
+using NMatcher.Activation;
 using NMatcher.Parsing;
-using Activator = NMatcher.Activation.Activator;
 
 namespace NMatcher.Matching
 {
     public class ExpressionMatcher 
     {
-
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
         
         public Result MatchExpression(object value, string expression)
