@@ -1,6 +1,7 @@
 ﻿using Sprache;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NMatcher.Parsing
 {
@@ -58,7 +59,7 @@ namespace NMatcher.Parsing
         internal static Parser<AST.Type> Expression =>
             from type in Type
             from expanders in (ExpanderWithNoArguments.Or(ExpanderWithArguments)).Many()
-            select new AST.Type(type.Item1, expanders, type.Item2);
+            select new AST.Type(type.Item1, expanders.ToList(), type.Item2);
 
         internal static Parser<IEnumerable<AST.INode>> Expressions =>
             from expr in Expression.Or<AST.INode>(ExpressionSpace).Many()

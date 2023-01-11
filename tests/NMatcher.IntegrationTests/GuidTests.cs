@@ -27,7 +27,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression("fuuuu", "@guid@");
             Assert.False(result.Successful);
-            Assert.Equal("fuuuu is not a valid Guid.", result.ErrorMessage);
+            Assert.Equal("Value fuuuu of Kind String is not a valid guid.", result.ErrorMessage);
         }
     }
 }

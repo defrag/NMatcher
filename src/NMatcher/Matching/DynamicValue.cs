@@ -25,18 +25,10 @@ namespace NMatcher.Matching
         private static DynamicValueKind? TryString(object value) =>
             value is string ? DynamicValueKind.String : null;
 
-        private static DynamicValueKind? TryInt(object value)
-        {
-            var res = value is short or ushort or int or uint or long or ulong;
-            return res ? DynamicValueKind.Int : null;
-        }
-        
-        private static DynamicValueKind? TryDouble(object value)
-        {
-            var res = value is float or double or decimal;
-            return res ? DynamicValueKind.Double : null;
-        }
-        
+        private static DynamicValueKind? TryInt(object value) =>
+            value is short or ushort or int or uint or long or ulong ? DynamicValueKind.Int : null;
+        private static DynamicValueKind? TryDouble(object value) =>
+            value is float or double or decimal ? DynamicValueKind.Double : null;
         private static DynamicValueKind? TryNull(object value) =>
             value is null ? DynamicValueKind.Null : null;
 
@@ -54,6 +46,15 @@ namespace NMatcher.Matching
             var kind = DynamicValueKindExtractor.UnsafelyExtractKind(value);
 
             return new DynamicValue(value, kind);
+        }
+
+        public override string ToString()
+        {
+            if (Value is null)
+            {
+                return "Value Null";
+            }
+            return $"Value {Value} of Kind {Kind}";
         }
     }
 }
