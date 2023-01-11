@@ -9,6 +9,13 @@ using String = NMatcher.Matching.String;
 
 namespace NMatcher.Activation
 {
+    internal sealed class ActivationException : Exception
+    {
+        public ActivationException(string message) : base(message)
+        {
+        }
+    }
+    
     internal static class Activator
     {
         internal static IMatcher CreateMatcher(Parsing.AST.Type type)
@@ -23,7 +30,7 @@ namespace NMatcher.Activation
                 "guid" => new Guid(),
                 "array" => new Array(),
                 "any" => new Any(),
-                _ => throw new ArgumentOutOfRangeException($"Type {type.Name} is not supported for matching. ")
+                _ => throw new ActivationException($"Type {type.Name} is not supported for matching.")
             };
 
             if (type.IsOptional)
@@ -46,7 +53,7 @@ namespace NMatcher.Activation
                     "Contains" => String.Contains((string)e.Args.First().Value),
                     "IsDateTime" => String.IsDateTime(),
                     "OneOf" => String.OneOf(e.Args.Select(v => (string)v.Value).ToArray()),
-                    _ => throw new ArgumentOutOfRangeException($"Expander {e.Name} is not supported for type string.")
+                    _ => throw new ActivationException($"Expander {e.Name} is not supported for type string.")
                 };
                 exp[0] = matches;
             }
@@ -65,7 +72,7 @@ namespace NMatcher.Activation
                 {
                     "GreaterThan" => Int.GreaterThan((int)e.Args.First().Value),
                     "LowerThan" => Int.LowerThan((int)e.Args.First().Value),
-                    _ => throw new ArgumentOutOfRangeException($"Expander {e.Name} is not supported for type int.")
+                    _ => throw new ActivationException($"Expander {e.Name} is not supported for type int.")
                 };
                 exp[0] = matches;
             }
@@ -84,7 +91,7 @@ namespace NMatcher.Activation
                 {
                     "GreaterThan" => Double.GreaterThan((double)e.Args.First().Value),
                     "LowerThan" => Double.LowerThan((double)e.Args.First().Value),
-                    _ => throw new ArgumentOutOfRangeException($"Expander {e.Name} is not supported for type double.")
+                    _ => throw new ActivationException($"Expander {e.Name} is not supported for type double.")
                 };
                 exp[0] = matches;
             }

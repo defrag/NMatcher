@@ -11,38 +11,46 @@ namespace NMatcher.Matching
         
         public Result MatchExpression(object value, string expression)
         {
-            var expressions = ExpressionParser.ParseExpressions(expression).ToList();
-            
-            if (expressions.Count == 1 || value is null)
+            try
             {
-                return expressions
+                var expressions = ExpressionParser.ParseExpressions(expression).ToList();
+
+                if (expressions.Count == 1 || value is null)
+                {
+                    return expressions
+                        .OfType<Parsing.AST.Type>()
+                        .Select(Activator.CreateMatcher)
+                        .First()
+                        .Match(DynamicValue.Create(value));
+                }
+
+                var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
+
+                if (false == regex.IsMatch(value.ToString()))
+                {
+                    return Result.Failure($"Value {value} does not match expression {expression}.");
+                }
+
+                var results = regex
+                    .Match(value.ToString())
+                    .Groups
+                    .Cast<Group>()
+                    .Skip(1)
+                    .Select(_ => ExpressionParser.ParseLiteral(_.ToString()))
+                    .Select(_ => _.Value);
+
+                var parts = expressions
                     .OfType<Parsing.AST.Type>()
                     .Select(Activator.CreateMatcher)
-                    .First()
-                    .Match(DynamicValue.Create(value));
+                    .Zip(results, (m, v) => m.Match(DynamicValue.Create(v)));
+
+                return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
             }
-            
-            var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
-            
-            if (false == regex.IsMatch(value.ToString()))
+            catch (ActivationException e)
             {
-                return Result.Failure($"Value {value} does not match expression {expression}.");
+                return Result.Failure(e.Message);
             }
-
-            var results = regex
-                .Match(value.ToString())
-                .Groups
-                .Cast<Group>()
-                .Skip(1)
-                .Select(_ => ExpressionParser.ParseLiteral(_.ToString()))
-                .Select(_ => _.Value);
-
-            var parts = expressions
-                .OfType<Parsing.AST.Type>()
-                .Select(Activator.CreateMatcher)
-                .Zip(results, (m, v) => m.Match(DynamicValue.Create(v)));
-
-            return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
+            
         }
 
 
