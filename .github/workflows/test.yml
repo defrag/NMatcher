@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         dotnet-version: ['5.0.x', '6.0.x']
@@ -20,10 +20,16 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      
+        id: setupstep
+
+#      - name: Create temporary global.json
+#        run: |
+#          echo '{"sdk":{"version": "${{ steps.setupstep.outputs.dotnet-version }}" } }' > ./global.json   
+        
       - name: Display dotnet version
-        run: dotnet --version          
-          
+        run: dotnet --version
+        
+      
       - name: Install dependencies
         run: dotnet restore
       
