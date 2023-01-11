@@ -31,20 +31,13 @@ namespace NMatcher.Matching2
 
         private static DynamicValueKind? TryInt(object value)
         {
-            var res = value is short || 
-                      value is ushort ||
-                      value is int ||
-                      value is uint ||
-                      value is long ||
-                      value is ulong;
+            var res = value is short or ushort or int or uint or long or ulong;
             return res ? DynamicValueKind.Int : null;
         }
         
         private static DynamicValueKind? TryDouble(object value)
         {
-            var res = value is float ||
-                       value is double ||
-                       value is decimal;
+            var res = value is float or double or decimal;
             return res ? DynamicValueKind.Double : null;
         }
         
@@ -52,16 +45,14 @@ namespace NMatcher.Matching2
             value is null ? DynamicValueKind.Null : null;
 
         private static DynamicValueKind? TryArray(object value) =>
-            value.GetType().IsArray ? DynamicValueKind.Array : null;
+            value is not null && value.GetType().IsArray ? DynamicValueKind.Array : null;
 
         private static DynamicValueKind? TryGuid(object value) =>
-            System.Guid.TryParse(value.ToString(), out _) ? DynamicValueKind.Guid : null;
+            value is not null && System.Guid.TryParse(value.ToString(), out _) ? DynamicValueKind.Guid : null;
     }
 
     public record DynamicValue(object Value, DynamicValueKind Kind)
     {
-        public T UnsafelyParseValue<T>() => (T)Value;
-
         public static DynamicValue UnsafelyTryCreateFrom(object value)
         {
             var kind = DynamicValueKindExtractor.UnsafelyExtractKind(value);

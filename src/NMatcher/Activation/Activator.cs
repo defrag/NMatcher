@@ -1,7 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using NMatcher.Matching2;
+using Array = NMatcher.Matching2.Array;
+using Double = NMatcher.Matching2.Double;
+using Guid = NMatcher.Matching2.Guid;
+using String = NMatcher.Matching2.String;
 
-namespace NMatcher.Matching2
+namespace NMatcher.Activation
 {
     internal class Activator
     {

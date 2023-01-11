@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using NMatcher.Matching;
+using Xunit;
 
 namespace NMatcher.Matching2
 {
@@ -7,7 +8,7 @@ namespace NMatcher.Matching2
         [Fact]
         public void it_matches_simple_string_expression()
         {
-            var matcher = new ExpressionMatcher2();
+            var matcher = new ExpressionMatcher();
 
             Assert.True(matcher.MatchExpression("str", "@string@").Successful);
         }
@@ -15,7 +16,7 @@ namespace NMatcher.Matching2
         [Fact]
         public void it_matches_simple_int_expression()
         {
-            var matcher = new ExpressionMatcher2();
+            var matcher = new ExpressionMatcher();
 
             Assert.True(matcher.MatchExpression(1, "@int@").Successful);
         }

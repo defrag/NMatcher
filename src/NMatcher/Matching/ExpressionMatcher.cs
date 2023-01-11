@@ -1,41 +1,31 @@
-﻿using NMatcher.Activation;
-using NMatcher.Parsing;
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
+using NMatcher.Matching2;
+using NMatcher.Parsing;
+using Activator = NMatcher.Activation.Activator;
 
 namespace NMatcher.Matching
 {
-    public class ExpressionMatcher
+    public class ExpressionMatcher 
     {
-        private readonly IActivator _activator;
 
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
-
-        private ExpressionMatcher(IActivator activator)
-        {
-            _activator = activator ?? throw new ArgumentNullException(nameof(activator));
-        }
-
-        public ExpressionMatcher() : this(new DefaultActivator())
-        {
-
-        }
-
+        
         public Result MatchExpression(object value, string expression)
         {
-            var expressions = ExpressionParser.ParseExpressions(expression);
-
-            if (expressions.Count() == 1 || value is null)
+            var expressions = ExpressionParser.ParseExpressions(expression).ToList();
+            
+            if (expressions.Count == 1 || value is null)
             {
                 return expressions
                     .OfType<Parsing.AST.Type>()
-                    .Select(_activator.CreateMatcherInstance)
+                    .Select(Activator.CreateMatcher)
                     .First()
-                    .Match(value);
+                    .Match(DynamicValue.UnsafelyTryCreateFrom(value));
             }
-
+            
             var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
+            
             if (false == regex.IsMatch(value.ToString()))
             {
                 return Result.Failure($"Value {value} does not match expression {expression}.");
@@ -51,11 +41,13 @@ namespace NMatcher.Matching
 
             var parts = expressions
                 .OfType<Parsing.AST.Type>()
-                .Select(_activator.CreateMatcherInstance)
-                .Zip(results, (m, v) => m.Match(v));
+                .Select(Activator.CreateMatcher)
+                .Zip(results, (m, v) => m.Match(DynamicValue.UnsafelyTryCreateFrom(v)));
 
-            return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success(); 
+            return parts.FirstOrDefault(_ => false == _.Successful) ?? Result.Success();
         }
+
+
 
         private static string NodeToRegex(Parsing.AST.INode node)
         {

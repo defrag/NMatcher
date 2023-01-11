@@ -1,5 +1,4 @@
-﻿using NMatcher.Activation;
-using NMatcher.Matching;
+﻿using NMatcher.Matching;
 using NMatcher.Matching2;
 
 namespace NMatcher
@@ -8,12 +7,12 @@ namespace NMatcher
     {
         public Result MatchExpression(object value, string expression)
         {
-            return new ExpressionMatcher2().MatchExpression(value, expression);
+            return new ExpressionMatcher().MatchExpression(value, expression);
         }
 
         public Result MatchJson(string actual, string expected)
         {
-            return new JsonMatcher(new ExpressionMatcher(), expected).Match(actual);
+            return new JsonMatcher(new ExpressionMatcher(), expected).Match(new DynamicValue(actual, DynamicValueKind.String));
         }
     }
 }
