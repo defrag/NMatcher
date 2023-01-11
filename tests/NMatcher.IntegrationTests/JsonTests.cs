@@ -523,5 +523,27 @@ namespace NMatcher.IntegrationTests
 
             Assert.True(result.Successful);
         }
+        
+        [Fact]
+        public void it_matches_with_skip_and_array_of_complex_objs()
+        {
+            JsonAssert.MatchesJson(
+                @"{
+                    ""users"":
+                    [
+                        {""name"": ""Michal"", ""id"": 1, ""bar"": {""baz"" : ""kaz"", ""zaz"": [1,2,3] }}, 
+                        {""name"": ""Johny"",  ""id"": 2, ""bar"": {""baz"" : ""kaz"", ""zaz"": [1,2,3] }}
+                    ]
+                }",
+                @"{
+                    ""users"":
+                    [
+                        {""name"": ""Michal"", ""id"": 1, ""bar"": {""baz"" : ""kaz"", ""zaz"": [1,2,3] }}, 
+                        ""@skip@""
+                    ]      
+                }"
+            );
+        }
+
     }
 }
