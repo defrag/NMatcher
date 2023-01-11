@@ -51,6 +51,8 @@ namespace NMatcher.Matching
             var actualCollected = JsonTraversal.CollectPaths(actualJ);
             var expectedCollected = JsonTraversal.CollectPaths(expectedJ);
 
+            var actual = actualCollected.AllPaths.Where(p => p == ".shipments[1]");
+            
             var actualAcc = actualCollected.AllPaths.ToList();
             var expectedResolvedPaths = new List<string>();
             
@@ -75,11 +77,7 @@ namespace NMatcher.Matching
                 if (expectedStr == SkipPattern)
                 {
                     expectedResolvedPaths.AddRange(
-                        actualCollected.PathsWithSameParent(element)
-                    );
-                    
-                    expectedResolvedPaths.AddRange(
-                        actualCollected.DescendantPathsOf(element)
+                        actualCollected.PathsDownstreamFromParent(element)
                     );
                     
                     actualAcc.Add(element.Path);

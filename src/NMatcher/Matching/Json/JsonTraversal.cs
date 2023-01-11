@@ -28,8 +28,8 @@ namespace NMatcher.Matching.Json
         public ElementWithPath? AtPath(string path) => 
             _dict.ContainsKey(path) ? _dict[path] : null;
             
-        public IReadOnlyCollection<string> PathsWithSameParent(ElementWithPath e)
-            => Elements.Where(p => p.ParentPath == e.ParentPath).Select(p => p.Path).ToList();
+        public IReadOnlyCollection<string> PathsDownstreamFromParent(ElementWithPath e)
+            => Elements.Where(p => p.ParentPath?.StartsWith(e.ParentPath!) == true).Select(p => p.Path).ToList();
 
         public IReadOnlyCollection<string> DescendantPathsOf(ElementWithPath e)
         {
