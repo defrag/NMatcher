@@ -502,5 +502,26 @@ namespace NMatcher.IntegrationTests
                 "
             );
         }
+        
+        [Fact]
+        public void it_works_with_trailing_commas()
+        {
+            var matcher = new Matcher();
+
+            var result = matcher.MatchJson(
+                @"
+                    [
+                        {""id"": 10,}
+                    ]
+                ",
+                @"
+                    [
+                        {""id"": ""@int@""}
+                    ]                   
+                "
+            );
+
+            Assert.True(result.Successful);
+        }
     }
 }

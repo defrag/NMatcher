@@ -23,7 +23,7 @@ Get-ChildItem -Path .\tests -Filter *.csproj -Recurse | ForEach-Object {
 # run pack on all *.csproj files in the src folder including 2>1 to redirect stderr to stdout for badly behaved tools
 Get-ChildItem -Path .\src -Filter *.csproj -Recurse | ForEach-Object {
 
-	& dotnet pack $_.FullName -c Release -o ..\..\artifacts
+	& dotnet pack $_.FullName -c Release -o .\artifacts
 	
 	if($LASTEXITCODE -ne 0) { exit 1 }
 }
