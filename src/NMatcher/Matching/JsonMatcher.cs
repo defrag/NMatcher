@@ -50,8 +50,6 @@ namespace NMatcher.Matching
             using var expectedJ = JsonDocument.Parse(_expectedJson, options);
             var actualCollected = JsonTraversal.CollectPaths(actualJ);
             var expectedCollected = JsonTraversal.CollectPaths(expectedJ);
-
-            var actual = actualCollected.AllPaths.Where(p => p == ".shipments[1]");
             
             var actualAcc = actualCollected.AllPaths.ToList();
             var expectedResolvedPaths = new List<string>();
