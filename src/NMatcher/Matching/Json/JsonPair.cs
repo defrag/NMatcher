@@ -1,8 +1,9 @@
-﻿namespace NMatcher.Matching.Json
+﻿#nullable enable
+namespace NMatcher.Matching.Json
 {
     internal sealed record JsonPair(
-        object Actual,
-        object Expected,
+        DynamicValue? Actual,
+        DynamicValue? Expected,
         string Path,
         bool IsEqual,
         JsonPair.ComparisonOrigin Origin = JsonPair.ComparisonOrigin.Scalar)

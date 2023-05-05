@@ -21,18 +21,18 @@ namespace NMatcher.Matching
                         .OfType<Parsing.AST.Type>()
                         .Select(Activator.CreateMatcher)
                         .First()
-                        .Match(DynamicValue.Create(value));
+                        .Match(value is DynamicValue dynamicValue ? dynamicValue : DynamicValue.Create(value));
                 }
 
                 var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
 
-                if (false == regex.IsMatch(value.ToString()))
+                if (false == regex.IsMatch(value is DynamicValue dv ? dv.Value.ToString() : value.ToString()))
                 {
                     return Result.Failure($"Value {value} does not match expression {expression}.");
                 }
 
                 var results = regex
-                    .Match(value.ToString())
+                    .Match(value is DynamicValue dv2 ? dv2.Value.ToString() : value.ToString())
                     .Groups
                     .Cast<Group>()
                     .Skip(1)

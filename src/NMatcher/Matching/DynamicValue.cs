@@ -1,4 +1,5 @@
-﻿using NMatcher.Extensions;
+﻿using System;
+using NMatcher.Extensions;
 
 namespace NMatcher.Matching
 {
@@ -48,8 +49,15 @@ namespace NMatcher.Matching
             return new DynamicValue(value, kind);
         }
 
+        public static DynamicValue Create<T>(T value) where T : struct
+        {
+            return Create((object)value);
+        }
+
+        
         public override string ToString()
         {
+            return Value.ToString();
             if (Value is null)
             {
                 return "Value Null";

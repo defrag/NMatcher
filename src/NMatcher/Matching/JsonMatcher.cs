@@ -70,7 +70,7 @@ namespace NMatcher.Matching
                     continue;
                 }
 
-                var expectedStr = (expectedValue?.ToString() ?? string.Empty);
+                var expectedStr = (expectedValue.Value?.ToString() ?? string.Empty);
                 
                 if (expectedStr == SkipPattern)
                 {
@@ -108,7 +108,7 @@ namespace NMatcher.Matching
         
         private string FormatError(JsonPair pair)
         {
-            return $"Actual value \"{pair.ActualAsString}\" ({pair.ActualType}) did not match \"{pair.ExpectedAsString}\" ({pair.ExpectedType}) at path \"{pair.Path}\".";
+            return $"{pair.Actual} did not match {pair.Expected} at path \"{pair.Path}\".";
         }
 
         private Result ReformatPair(JsonPair pair)
