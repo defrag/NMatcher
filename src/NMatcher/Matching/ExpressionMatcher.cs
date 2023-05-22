@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using NMatcher.Activation;
 using NMatcher.Parsing;
@@ -8,9 +9,13 @@ namespace NMatcher.Matching
     public class ExpressionMatcher 
     {
         internal static readonly Regex MatcherRegex = new Regex("@([a-zA-Z\\?])+@", RegexOptions.IgnoreCase);
-        
+
         public Result MatchExpression(object value, string expression)
+            => MatchExpression(DynamicValue.Create(value), expression);
+        
+        internal Result MatchExpression(DynamicValue subj, string expression)
         {
+            var value = subj ?? new DynamicValue(null, DynamicValueKind.Null);
             try
             {
                 var expressions = ExpressionParser.ParseExpressions(expression).ToList();
@@ -21,18 +26,18 @@ namespace NMatcher.Matching
                         .OfType<Parsing.AST.Type>()
                         .Select(Activator.CreateMatcher)
                         .First()
-                        .Match(DynamicValue.Create(value));
+                        .Match(value);
                 }
 
                 var regex = new Regex(string.Join("", expressions.Select(NodeToRegex)));
 
-                if (false == regex.IsMatch(value.ToString()))
+                if (false == regex.IsMatch(value.StringRepresentation))
                 {
                     return Result.Failure($"Value {value} does not match expression {expression}.");
                 }
 
                 var results = regex
-                    .Match(value.ToString())
+                    .Match(value.StringRepresentation)
                     .Groups
                     .Cast<Group>()
                     .Skip(1)
@@ -52,9 +57,7 @@ namespace NMatcher.Matching
             }
             
         }
-
-
-
+        
         private static string NodeToRegex(Parsing.AST.INode node)
         {
             switch (node)

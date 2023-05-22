@@ -1,4 +1,5 @@
-﻿using NMatcher.Extensions;
+﻿using System;
+using NMatcher.Extensions;
 
 namespace NMatcher.Matching
 {
@@ -39,7 +40,7 @@ namespace NMatcher.Matching
             value is not null && System.Guid.TryParse(value.ToString(), out _) ? DynamicValueKind.Guid : null;
     }
 
-    public record DynamicValue(object Value, DynamicValueKind Kind)
+    internal record DynamicValue(object Value, DynamicValueKind Kind)
     {
         public static DynamicValue Create(object value)
         {
@@ -48,13 +49,20 @@ namespace NMatcher.Matching
             return new DynamicValue(value, kind);
         }
 
+        public static DynamicValue Create<T>(T value) where T : struct
+        {
+            return Create((object)value);
+        }
+
+        public string StringRepresentation => Value?.ToString() ?? string.Empty;
+        
         public override string ToString()
         {
             if (Value is null)
             {
-                return "Value Null";
+                return "null";
             }
-            return $"Value {Value} of Kind {Kind}";
+            return $"\"{Value}\" ({Kind})";
         }
     }
 }

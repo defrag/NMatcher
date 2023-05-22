@@ -8,7 +8,7 @@ namespace NMatcher.Matching.Json
 {
     internal sealed record ElementWithPath(JsonElement Element, string Path, string? ParentPath = null)
     {
-        public object? ParseValue()
+        public DynamicValue? ParseValue()
         {
             return Element.ParseValue();
         }
