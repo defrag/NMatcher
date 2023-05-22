@@ -54,15 +54,15 @@ namespace NMatcher.Matching
             return Create((object)value);
         }
 
+        public string StringRepresentation => Value?.ToString() ?? string.Empty;
         
         public override string ToString()
         {
-            return Value.ToString();
             if (Value is null)
             {
-                return "Value Null";
+                return "null";
             }
-            return $"Value {Value} of Kind {Kind}";
+            return $"\"{Value}\" ({Kind})";
         }
     }
 }

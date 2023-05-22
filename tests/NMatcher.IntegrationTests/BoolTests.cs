@@ -32,7 +32,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression("fuuu", "@bool@");
             Assert.False(result.Successful);
-            Assert.Equal("Value fuuu of Kind String is not a valid bool.", result.ErrorMessage);
+            Assert.Equal("\"fuuu\" (String) is not a valid bool.", result.ErrorMessage);
         }
     }
 }

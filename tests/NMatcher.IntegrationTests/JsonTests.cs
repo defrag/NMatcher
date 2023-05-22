@@ -238,7 +238,7 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("Actual value \"80-000\" (System.String) did not match \"@int@\" (Expression) at path \".subnode.zipCode\".", result.ErrorMessage);
+            Assert.Equal("Actual value \"80-000\" (String) did not match \"@int@\" (Expression) at path \".subnode.zipCode\".", result.ErrorMessage);
         }
 
         [Fact]
@@ -247,7 +247,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchJson(@"{""id"" : 1}", @"{""id"" : 2}");
             Assert.False(result.Successful);
-            Assert.Equal("Actual value \"1\" (System.Int32) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
+            Assert.Equal("Actual value \"1\" (Int) did not match \"2\" (Int) at path \".id\".", result.ErrorMessage);
         }
 
         [Fact]
@@ -343,7 +343,7 @@ namespace NMatcher.IntegrationTests
             );
 
             Assert.False(result.Successful);
-            Assert.Equal("Actual value \"NY\" (System.String) did not match \"LA\" (System.String) at path \".subnode.city\".", result.ErrorMessage);
+            Assert.Equal("Actual value \"NY\" (String) did not match \"LA\" (String) at path \".subnode.city\".", result.ErrorMessage);
         }
 
         [Fact]
@@ -376,7 +376,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchJson(@"{""id"" : 2.0}", @"{ ""id"" : 2}");
             Assert.False(result.Successful);
-            Assert.Equal("Actual value \"2\" (System.Double) did not match \"2\" (System.Int32) at path \".id\".", result.ErrorMessage);
+            Assert.Equal("Actual value \"2\" (Double) did not match \"2\" (Int) at path \".id\".", result.ErrorMessage);
         }
 
         [Fact]

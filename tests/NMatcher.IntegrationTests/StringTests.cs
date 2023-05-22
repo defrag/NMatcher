@@ -62,7 +62,7 @@ namespace NMatcher.IntegrationTests
             var matcher = new Matcher();
             var result = matcher.MatchExpression(100, "@string@.Contains(\"str\")");
             Assert.False(result.Successful);
-            Assert.Equal("Value 100 of Kind Int is not a valid string.", result.ErrorMessage);
+            Assert.Equal("\"100\" (Int) is not a valid string.", result.ErrorMessage);
         }
 
 

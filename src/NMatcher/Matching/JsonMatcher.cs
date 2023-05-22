@@ -108,7 +108,7 @@ namespace NMatcher.Matching
         
         private string FormatError(JsonPair pair)
         {
-            return $"{pair.Actual} did not match {pair.Expected} at path \"{pair.Path}\".";
+            return $"Actual value {pair.ActualAsString} did not match {pair.ExpectedAsString} at path \"{pair.Path}\".";
         }
 
         private Result ReformatPair(JsonPair pair)
