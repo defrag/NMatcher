@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace NMatcher.Matching
 {
-    public sealed class JsonMatcher : IMatcher
+    internal sealed class JsonMatcher : IMatcher
     {
         private readonly ExpressionMatcher _expressionMatcher;
         private readonly string _expectedJson;

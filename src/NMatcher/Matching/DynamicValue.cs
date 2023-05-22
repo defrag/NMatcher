@@ -40,7 +40,7 @@ namespace NMatcher.Matching
             value is not null && System.Guid.TryParse(value.ToString(), out _) ? DynamicValueKind.Guid : null;
     }
 
-    public record DynamicValue(object Value, DynamicValueKind Kind)
+    internal record DynamicValue(object Value, DynamicValueKind Kind)
     {
         public static DynamicValue Create(object value)
         {

@@ -13,7 +13,7 @@ namespace NMatcher.Matching
         public Result MatchExpression(object value, string expression)
             => MatchExpression(DynamicValue.Create(value), expression);
         
-        public Result MatchExpression(DynamicValue subj, string expression)
+        internal Result MatchExpression(DynamicValue subj, string expression)
         {
             var value = subj ?? new DynamicValue(null, DynamicValueKind.Null);
             try
