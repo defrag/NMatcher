@@ -195,23 +195,10 @@ matcher.MatchExpression("https://amazon.com?page=1", "https://@string@.Contains(
 This is where NMatcher shines. Check the first example from README. It allows to combine all expression to achieve easy to use json response matching in your test. All checks can be wrapped with optional condition (eg @string?@), which will ommit assertion when expected node was not found in actual json.
 
 ### Integration with test frameworks
-NMatcher doesn't come with out of the box integration with test frameworks, but its super easy to roll your own version. Here is a sample with fluent assertions:
 
-```csharp
-public static class AssertionsExtensions
-{
-    public static AndConstraint<StringAssertions> MatchJson(this StringAssertions assertions, string expected, string because = "", params object[] becauseArgs)
-    {
-        var matcher = new Matcher();
-        var result = matcher.MatchJson(assertions.Subject, expected);
-        Execute.Assertion
-            .ForCondition(result.Successful)
-            .BecauseOf(because, becauseArgs)
-            .FailWith($"Json matching failed because of following reason: '{result.ErrorMessage}'.");
-        return new AndConstraint<StringAssertions>(assertions);
-    }
-}
+FluentAssertions via package ```NMatcher.FluentAssertions```.
 
+```c#
 // use it later on
 
 [Fact]

@@ -4,6 +4,12 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Description>NMatcher is a simple library that eases tests (mostly with json). Package
+        includes the FluentAssertions extension to ease the testing.</Description>
+        <PackageReadmeFile>README.FluentAssertions.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/defrag/NMatcher</PackageProjectUrl>
+        <PackageTags>json;testing;matching;api</PackageTags>
+        <PackageLicenseUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\NMatcher\NMatcher.csproj" />
+      <None Include="..\..\README.FluentAssertions.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
     </ItemGroup>
 
 </Project>
