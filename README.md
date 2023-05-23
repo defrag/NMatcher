@@ -199,7 +199,7 @@ This is where NMatcher shines. Check the first example from README. It allows to
 FluentAssertions via package ```NMatcher.FluentAssertions```.
 
 ```c#
-// use it later on
+using NMatcher.FluentAssertions;
 
 [Fact]
 public async Task it_returns_200_with_product()
