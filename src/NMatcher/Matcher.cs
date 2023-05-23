@@ -1,4 +1,5 @@
-﻿using NMatcher.Matching;
+﻿using System;
+using NMatcher.Matching;
 
 namespace NMatcher
 {
@@ -12,6 +13,14 @@ namespace NMatcher
         public Result MatchJson(string actual, string expected)
         {
             return new JsonMatcher(new ExpressionMatcher(), expected).Match(new DynamicValue(actual, DynamicValueKind.String));
+        }
+    }
+
+    public class MatchingException : Exception
+    {
+        public MatchingException(string msg) : base(msg) 
+        {
+            
         }
     }
 }

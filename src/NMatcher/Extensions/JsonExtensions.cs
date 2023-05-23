@@ -24,7 +24,7 @@ namespace NMatcher.Extensions
                 JsonValueKind.Object => DynamicValue.Create(e.EnumerateObject().ToArray().Select(e2 => e2.Value.ParseValue()).ToArray()),
                 JsonValueKind.Null => DynamicValue.Create(null),
                 JsonValueKind.Undefined => null,
-                _ => throw new ArgumentOutOfRangeException($"Parsing value of kind {e.ValueKind} is not supported.")
+                _ => throw new MatchingException($"Parsing value of kind {e.ValueKind} is not supported.")
             };
         }
         

@@ -74,6 +74,10 @@ namespace NMatcher.Matching
                 
                 if (expectedStr == SkipPattern)
                 {
+                    if (expectedNode.ParentElement?.ValueKind != JsonValueKind.Array)
+                    {
+                        throw new MatchingException($"Skip pattern is supported only within Array JSON kind at path \"{element.Path}\", but it was located within {expectedNode.ParentElement?.ValueKind} instead.");
+                    }
                     expectedResolvedPaths.AddRange(
                         actualCollected.PathsDownstreamFromParent(element)
                     );

@@ -6,7 +6,7 @@ using NMatcher.Extensions;
 
 namespace NMatcher.Matching.Json
 {
-    internal sealed record ElementWithPath(JsonElement Element, string Path, string? ParentPath = null)
+    internal sealed record ElementWithPath(JsonElement Element, string Path, JsonElement? ParentElement, string? ParentPath = null)
     {
         public DynamicValue? ParseValue()
         {
@@ -48,16 +48,16 @@ namespace NMatcher.Matching.Json
         {
             var elems = new List<ElementWithPath>();
 
-            void Iter(JsonElement node, string origin, string? parentPath = null)
+            void Iter(JsonElement node, string origin, string? parentPath = null, JsonElement? parent = null)
             {
                 if (node.ValueKind == JsonValueKind.Array)
                 {
-                    elems.Add(new ElementWithPath(node, origin, parentPath));
+                    elems.Add(new ElementWithPath(node, origin, parent, parentPath));
                     var all = node.EnumerateArray().ToArray();
                     for (int i = 0; i < all.Length; i++)
                     {
 
-                        Iter(all[i], $"{origin}[{i}]", origin);
+                        Iter(all[i], $"{origin}[{i}]", origin, node);
                     }
                 }
                 else if (node.ValueKind == JsonValueKind.Object)
@@ -67,13 +67,13 @@ namespace NMatcher.Matching.Json
                     foreach (var child in all)
                     {
                         var separator = origin.EndsWith('.') ? "" : ".";
-                        Iter(child.Value, $"{origin}{separator}{child.Name}", origin);
+                        Iter(child.Value, $"{origin}{separator}{child.Name}", origin, node);
                     }
                 }
                 
                 else if (origin != "")
                 {
-                    elems.Add(new ElementWithPath(node, origin, parentPath));
+                    elems.Add(new ElementWithPath(node, origin, parent, parentPath));
                 }
             }
             
