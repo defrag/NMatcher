@@ -545,5 +545,21 @@ namespace NMatcher.IntegrationTests
             );
         }
 
+        [Fact]
+        public void it_doesnt_allow_skip_inside_non_array_parent()
+        {
+            var ex = Assert.Throws<MatchingException>(() => 
+                new Matcher().MatchJson(
+                    @"
+                        {""id"" : ""2"", ""name"": ""test""}
+                    ",
+                    @"
+                        {""id"" : ""2"", ""name"": ""@skip@""}  
+                    "
+                ));
+            
+            Assert.Equal("Skip pattern is supported only within Array JSON kind at path \".name\", but it was located within Object instead.",ex.Message);
+        }
+        
     }
 }
