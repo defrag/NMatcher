@@ -67,6 +67,36 @@ public void it_matches_nested_json()
 }
 ```
 
+#### Skipping a set of following elements while matching json
+
+Sometimes our responses can include a large list of elements. While asserting our protocol of given endpoint,
+we may be just interested in general structure assertion of first element, while skipping others.
+We can achieve that as follows
+
+```C#
+var result = matcher.MatchJson(
+    @"
+    [
+        { "id": "5001", "type": "None" },
+        { "id": "5002", "type": "Glazed" },
+        { "id": "5005", "type": "Sugar" },
+        { "id": "5007", "type": "Powdered Sugar" },
+        { "id": "5006", "type": "Chocolate with Sprinkles" },
+        { "id": "5003", "type": "Chocolate" },
+        { "id": "5004", "type": "Maple" }
+    ]",
+    @"
+    [
+        { "id": "@string@", "type": "@string@" },
+        ""@skip@""
+    ]
+    "
+);
+
+Assert.True(result.Successful);
+
+```
+
 ### Available expressions: 
 * @string@
 * @int@
