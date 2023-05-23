@@ -7,6 +7,9 @@
         <Description>NMatcher is a simple library that eases tests (mostly with json). Package
         includes the FluentAssertions extension to ease the testing.</Description>
         <PackageReadmeFile>README.FluentAssertions.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/defrag/NMatcher</PackageProjectUrl>
+        <PackageTags>json;testing;matching;api</PackageTags>
+        <PackageLicenseUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
