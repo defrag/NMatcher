@@ -14,13 +14,13 @@
     <PackageTags>json;testing;matching;api</PackageTags>
     <PackageLicenseUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenseUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.jpg</PackageIcon>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Sprache" Version="2.1.0" />
     <None Include="..\..\README.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
-    <None Include="..\..\icon.jpg" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\icon.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
 </Project>
