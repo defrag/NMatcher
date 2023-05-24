@@ -10,7 +10,7 @@
         <PackageProjectUrl>https://github.com/defrag/NMatcher</PackageProjectUrl>
         <PackageTags>json;testing;matching;api</PackageTags>
         <PackageLicenseUrl>https://github.com/defrag/NMatcher/blob/master/LICENSE</PackageLicenseUrl>
-        <PackageIcon>icon.jpg</PackageIcon>
+        <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,7 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\NMatcher\NMatcher.csproj" />
       <None Include="..\..\README.FluentAssertions.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
-      <None Include="..\..\icon.jpg" Pack="true" Visible="false" PackagePath="" />
+      <None Include="..\..\icon.png" Pack="true" Visible="false" PackagePath="" />
     </ItemGroup>
 
 </Project>
