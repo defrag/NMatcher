@@ -20,7 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\NMatcher\NMatcher.csproj" />
       <None Include="..\..\README.FluentAssertions.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
-      <None Include="..\FluentAssertions.png" Pack="true" Visible="false" PackagePath="" />
+      <None Include="..\..\icon.jpg" Pack="true" Visible="false" PackagePath="" />
     </ItemGroup>
 
 </Project>
