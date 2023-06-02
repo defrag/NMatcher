@@ -3,6 +3,8 @@ using NMatcher.FluentAssertions;
 
 namespace NMatcher.Samples.Api.Tests.Integration;
 
+
+[Trait("Category", "Sample")]
 public class WeatherForecastControllerTests
 {
     [Fact]
